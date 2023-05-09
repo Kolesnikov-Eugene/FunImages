@@ -8,8 +8,8 @@
 import UIKit
 
 final class ImagesListViewController: UIViewController {
-
     @IBOutlet private weak var tableView: UITableView!
+    
     private let imagesName: [String] = Array(0..<20).map{ "\($0)" }
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -53,8 +53,35 @@ extension ImagesListViewController {
         cell.dateLabel.text = dateFormatter.string(from: Date())
         
         let likeIsOn = indexPath.row % 2 == 0
-        let cellImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
-        cell.likeButton.setImage(cellImage, for: .normal)
+        let cellLikeButttonImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+        cell.likeButton.setImage(cellLikeButttonImage, for: .normal)
+        addGradient(for: cell)
+    }
+    
+    func addGradient(for cell: ImagesListCell) {
+        let view = UIView()
+        view.frame = CGRect(x: 0, y: 0, width: cell.contentView.bounds.width, height: 30)
+        view.backgroundColor = .clear
+
+        let gradientlayer = CAGradientLayer()
+        gradientlayer.colors = [
+          UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 0).cgColor,
+          UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 0.2).cgColor
+        ]
+        gradientlayer.locations = [0, 1]
+        gradientlayer.startPoint = CGPoint(x: 0.0, y: 0.0)
+        gradientlayer.endPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientlayer.frame = view.bounds
+        gradientlayer.position = view.center
+        view.layer.addSublayer(gradientlayer)
+
+        let parent = cell.contentView
+        parent.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        view.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0).isActive = true
+        view.trailingAnchor.constraint(equalTo: parent.trailingAnchor, constant: 0).isActive = true
+        view.bottomAnchor.constraint(equalTo: parent.bottomAnchor, constant: 0).isActive = true
     }
 }
 // MARK: - TableView Delegate

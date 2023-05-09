@@ -74,6 +74,7 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <sections/>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="pvS-mN-rgJ"/>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="sHZ-wp-BzU"/>
