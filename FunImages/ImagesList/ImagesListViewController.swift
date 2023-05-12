@@ -39,9 +39,7 @@ extension ImagesListViewController: UITableViewDataSource {
 
         configCell(for: imageListCell, with: indexPath)
         
-        if !imageListCell.hasGradient {
-            imageListCell.addGradient()
-        }
+        imageListCell.addGradientIfNeeded()
 
         return imageListCell
     }

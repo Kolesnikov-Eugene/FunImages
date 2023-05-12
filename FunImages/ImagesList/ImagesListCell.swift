@@ -11,11 +11,18 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var imageForCell: UIImageView?
-    static let reuseIdentifier = "ImagesListCell"
-    var hasGradient = false
     
-    func addGradient() {
-        hasGradient = true
+    static let reuseIdentifier = "ImagesListCell"
+    private var cellHasGradient = false
+    
+    func addGradientIfNeeded() {
+        if !cellHasGradient {
+            addGradient()
+            cellHasGradient = true
+        }
+    }
+    
+    private func addGradient() {
         let view = UIView()
         view.frame = CGRect(x: 0, y: 0, width: self.contentView.bounds.width, height: 30)
         view.backgroundColor = .clear
@@ -31,7 +38,7 @@ final class ImagesListCell: UITableViewCell {
         gradientlayer.position = view.center
         view.layer.addSublayer(gradientlayer)
 
-        let parent = self.contentView
+        let parent = self.imageForCell!
         parent.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.heightAnchor.constraint(equalToConstant: 30).isActive = true
