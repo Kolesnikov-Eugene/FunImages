@@ -62,6 +62,9 @@ extension ImagesListViewController {
 // MARK: - TableView Delegate
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "ShowSingleImage", sender: indexPath)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -74,6 +77,18 @@ extension ImagesListViewController: UITableViewDelegate {
         let scale = imageViewWidth / imageWidth
         let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowSingleImage" {
+            let destinationVC = segue.destination as! SingleImageViewController
+            let indexPath = tableView.indexPathForSelectedRow!
+            let image = UIImage(named: imagesName[indexPath.row])
+//            _ = destinationVC.view
+            destinationVC.image = image
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
     }
 }
 
