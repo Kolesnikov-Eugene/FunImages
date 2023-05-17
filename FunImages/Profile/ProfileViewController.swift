@@ -18,7 +18,6 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
     }
     
-
     @IBAction func logOutButtonPressed(_ sender: UIButton) {
     }
     
