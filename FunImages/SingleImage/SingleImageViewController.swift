@@ -22,13 +22,21 @@ final class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         imageView.image = image
-        scrollView.maximumZoomScale = 2
+        scrollView.maximumZoomScale = 3.5
         scrollView.minimumZoomScale = 0.1
         rescaleAndCenterImageInScrollView(image: image)
     }
     
     @IBAction func didPressBackButton(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func didTapShareButton(_ sender: UIButton) {
+        let activityController = UIActivityViewController(
+            activityItems: [image!],
+            applicationActivities: nil)
+        
+        present(activityController, animated: true)
     }
 }
 
