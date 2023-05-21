@@ -22,7 +22,7 @@ final class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         imageView.image = image
-        scrollView.maximumZoomScale = 3.5
+        scrollView.maximumZoomScale = 10
         scrollView.minimumZoomScale = 0.1
         rescaleAndCenterImageInScrollView(image: image)
     }
