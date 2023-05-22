@@ -62,11 +62,10 @@
 		4449B5FF2A0030180085455F /* FunImages */ = {
 			isa = PBXGroup;
 			children = (
+				4449B6062A0030180085455F /* Main.storyboard */,
 				4488991D2A066C7900868D03 /* ImagesList */,
 				44D147802A15497D00649F39 /* SingleImage */,
 				44D1477F2A15495C00649F39 /* Profile */,
-				448899202A066CC200868D03 /* Models */,
-				448899212A066D0E00868D03 /* Services */,
 				4449B6002A0030180085455F /* AppDelegate.swift */,
 				4449B6022A0030180085455F /* SceneDelegate.swift */,
 				448899222A066D3F00868D03 /* Resources */,
@@ -79,23 +78,8 @@
 			children = (
 				4449B6042A0030180085455F /* ImagesListViewController.swift */,
 				4488994E2A067A4400868D03 /* ImagesListCell.swift */,
-				4449B6062A0030180085455F /* Main.storyboard */,
 			);
 			path = ImagesList;
-			sourceTree = "<group>";
-		};
-		448899202A066CC200868D03 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		448899212A066D0E00868D03 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Services;
 			sourceTree = "<group>";
 		};
 		448899222A066D3F00868D03 /* Resources */ = {

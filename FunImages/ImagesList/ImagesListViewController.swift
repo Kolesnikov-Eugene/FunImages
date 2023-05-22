@@ -85,7 +85,6 @@ extension ImagesListViewController: UITableViewDelegate {
             let destinationVC = segue.destination as! SingleImageViewController
             let indexPath = tableView.indexPathForSelectedRow!
             let image = UIImage(named: imagesName[indexPath.row])
-//            _ = destinationVC.view
             destinationVC.image = image
         } else {
             super.prepare(for: segue, sender: sender)
