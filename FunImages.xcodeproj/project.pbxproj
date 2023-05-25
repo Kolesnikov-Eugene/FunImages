@@ -15,6 +15,7 @@
 		4449B60D2A0030190085455F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4449B60B2A0030190085455F /* LaunchScreen.storyboard */; };
 		4488994F2A067A4400868D03 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4488994E2A067A4400868D03 /* ImagesListCell.swift */; };
 		449C7AB02A0EA18D007547B2 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449C7AAF2A0EA18D007547B2 /* ProfileViewController.swift */; };
+		44B0C3812A1FFBD400F58A16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B0C3802A1FFBD400F58A16 /* Constants.swift */; };
 		44CC34312A1A356800842B86 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44CC34302A1A356800842B86 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 		4449B60E2A0030190085455F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4488994E2A067A4400868D03 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		449C7AAF2A0EA18D007547B2 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		44B0C3802A1FFBD400F58A16 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		44CC34302A1A356800842B86 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,6 +71,7 @@
 				4449B6002A0030180085455F /* AppDelegate.swift */,
 				4449B6022A0030180085455F /* SceneDelegate.swift */,
 				448899222A066D3F00868D03 /* Resources */,
+				44B0C3802A1FFBD400F58A16 /* Constants.swift */,
 			);
 			path = FunImages;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 				4488994F2A067A4400868D03 /* ImagesListCell.swift in Sources */,
 				449C7AB02A0EA18D007547B2 /* ProfileViewController.swift in Sources */,
 				4449B6012A0030180085455F /* AppDelegate.swift in Sources */,
+				44B0C3812A1FFBD400F58A16 /* Constants.swift in Sources */,
 				441FEF292A0F817000BFE2DB /* SingleImageViewController.swift in Sources */,
 				4449B6032A0030180085455F /* SceneDelegate.swift in Sources */,
 			);
