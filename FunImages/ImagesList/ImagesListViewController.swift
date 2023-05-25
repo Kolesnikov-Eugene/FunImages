@@ -82,10 +82,11 @@ extension ImagesListViewController: UITableViewDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageViewIdentifier {
-            let destinationVC = segue.destination as! SingleImageViewController
-            let indexPath = tableView.indexPathForSelectedRow!
-            let image = UIImage(named: imagesName[indexPath.row])
-            destinationVC.image = image
+            if let destinationVC = segue.destination as? SingleImageViewController {
+                let indexPath = tableView.indexPathForSelectedRow!
+                let image = UIImage(named: imagesName[indexPath.row])
+                destinationVC.image = image
+            }
         } else {
             super.prepare(for: segue, sender: sender)
         }
