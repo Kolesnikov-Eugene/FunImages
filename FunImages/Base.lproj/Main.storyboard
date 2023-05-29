@@ -255,19 +255,27 @@
                                     <action selector="didTapBackButton:" destination="2UO-fX-PEk" eventType="touchUpInside" id="C12-vh-F2q"/>
                                 </connections>
                             </button>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.10000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="sr3-0K-owx">
+                                <rect key="frame" x="0.0" y="101" width="393" height="4"/>
+                                <color key="progressTintColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="pPt-rh-maH"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="sr3-0K-owx" firstAttribute="leading" secondItem="24a-HW-rUA" secondAttribute="leading" id="AWz-SN-Lpl"/>
                             <constraint firstAttribute="trailing" secondItem="h0g-Vp-oFf" secondAttribute="trailing" id="GsN-01-afe"/>
                             <constraint firstItem="h0g-Vp-oFf" firstAttribute="top" secondItem="24a-HW-rUA" secondAttribute="top" id="Hjw-sE-8gv"/>
+                            <constraint firstItem="sr3-0K-owx" firstAttribute="top" secondItem="u4O-6T-k1S" secondAttribute="bottom" id="SaW-G6-Fxn"/>
                             <constraint firstItem="u4O-6T-k1S" firstAttribute="leading" secondItem="pPt-rh-maH" secondAttribute="leading" id="aZh-uT-fFI"/>
                             <constraint firstAttribute="bottom" secondItem="h0g-Vp-oFf" secondAttribute="bottom" id="bpP-wv-P4x"/>
                             <constraint firstItem="u4O-6T-k1S" firstAttribute="top" secondItem="pPt-rh-maH" secondAttribute="top" id="eMy-Zt-Li7"/>
+                            <constraint firstAttribute="trailing" secondItem="sr3-0K-owx" secondAttribute="trailing" id="esb-AT-cym"/>
                             <constraint firstItem="h0g-Vp-oFf" firstAttribute="leading" secondItem="24a-HW-rUA" secondAttribute="leading" id="yKu-G5-VO8"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="progressView" destination="sr3-0K-owx" id="Jtj-9f-Xdd"/>
                         <outlet property="webView" destination="h0g-Vp-oFf" id="s4B-I6-4Kt"/>
                     </connections>
                 </viewController>
