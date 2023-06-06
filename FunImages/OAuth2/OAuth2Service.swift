@@ -9,14 +9,14 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-    private let urlSession = URLSession.shared
     
+    private let urlSession = URLSession.shared
     private (set) var authToken: String? {
         get {
             return OAuth2TokenStorage().token
         }
         set {
-            OAuth2TokenStorage().token = newValue ?? "token"
+            OAuth2TokenStorage().token = newValue
         }
     }
     
@@ -47,12 +47,6 @@ final class OAuth2Service {
             httpMethod: "POST",
             baseURL: URL(string: "https://unsplash.com")!)
     }
-}
-
-enum NetworkError: Error {
-    case httpStatusCode(Int)
-    case urlRequestError(Error)
-    case urlSessionError
 }
 
 extension OAuth2Service {

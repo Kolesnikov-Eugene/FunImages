@@ -8,12 +8,18 @@
 import UIKit
 
 final class ImagesListCell: UITableViewCell {
-    @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var imageForCell: UIImageView!
+    @IBOutlet private weak var likeButton: UIButton!
+    @IBOutlet private weak var dateLabel: UILabel!
+    @IBOutlet private weak var imageForCell: UIImageView!
     
     static let reuseIdentifier = "ImagesListCell"
     private var cellHasGradient = false
+    
+    func configCell(with cellImage: UIImage, dateLabelText: String, likeButtonImage: UIImage) {
+        imageForCell.image = cellImage
+        dateLabel.text = dateLabelText
+        likeButton.setImage(likeButtonImage, for: .normal)
+    }
     
     func addGradientIfNeeded() {
         if !cellHasGradient {
