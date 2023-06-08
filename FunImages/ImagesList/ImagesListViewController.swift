@@ -50,14 +50,18 @@ extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         let imageName = imagesName[indexPath.row]
         guard let image = UIImage(named: imageName) else { return }
-        
-        cell.imageForCell?.image = image
-        
-        cell.dateLabel.text = dateFormatter.string(from: Date())
+
+        let dateText = dateFormatter.string(from: Date())
         
         let likeIsOn = indexPath.row % 2 != 0
         let cellLikeButttonImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
-        cell.likeButton.setImage(cellLikeButttonImage, for: .normal)
+        
+        let cellModel = ImageListCellModel(
+            imageForCell: image,
+            dateLabelText: dateText,
+            likeButtonImage: cellLikeButttonImage!)
+        
+        cell.configCell(with: cellModel)
     }
 }
 // MARK: - TableView Delegate
