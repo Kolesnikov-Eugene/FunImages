@@ -8,18 +8,15 @@
 import UIKit
 
 final class SplashViewController: UIViewController {
-    private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-    
-    private let oauth2Service = OAuth2Service()
-    private let oauth2Storage = OAuth2TokenStorage()
+    private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
-        if oauth2Storage.token != nil {
+        if OAuth2TokenStorage.shared.token != nil {
             switchToTabBarController()
         } else {
-            performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
+            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
     
@@ -35,10 +32,10 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
+        if segue.identifier == showAuthenticationScreenSegueIdentifier {
             guard let navigationController = segue.destination as? UINavigationController,
                   let viewController = navigationController.viewControllers[0] as? AuthViewController
-            else { fatalError("Failed to prepare for \(ShowAuthenticationScreenSegueIdentifier)") }
+            else { return assertionFailure("Failed to prepare for \(showAuthenticationScreenSegueIdentifier)") }
             viewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
@@ -55,7 +52,7 @@ extension SplashViewController: AuthViewControllerDelegate {
     }
     
     private func fetchAuthToken(_ code: String) {
-        oauth2Service.fetchAuthToken(code) { [weak self] result in
+        OAuth2Service.shared.fetchAuthToken(code) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success:

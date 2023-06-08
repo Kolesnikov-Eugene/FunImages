@@ -190,7 +190,7 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1c4-RX-3lm">
-                                <rect key="frame" x="16" y="680" width="361" height="48"/>
+                                <rect key="frame" x="16" y="714" width="361" height="48"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="jyI-qu-8Qt"/>
@@ -215,7 +215,7 @@
                         <constraints>
                             <constraint firstItem="DHZ-fl-88y" firstAttribute="trailing" secondItem="1c4-RX-3lm" secondAttribute="trailing" constant="16" id="IhX-xA-1L7"/>
                             <constraint firstItem="1c4-RX-3lm" firstAttribute="leading" secondItem="DHZ-fl-88y" secondAttribute="leading" constant="16" id="M4E-4W-4o6"/>
-                            <constraint firstItem="DHZ-fl-88y" firstAttribute="bottom" secondItem="1c4-RX-3lm" secondAttribute="bottom" constant="124" id="Uao-9c-23c"/>
+                            <constraint firstItem="DHZ-fl-88y" firstAttribute="bottom" secondItem="1c4-RX-3lm" secondAttribute="bottom" constant="90" id="Uao-9c-23c"/>
                             <constraint firstItem="4co-Nt-hRd" firstAttribute="centerX" secondItem="2dT-1z-opR" secondAttribute="centerX" id="VTe-xZ-wer"/>
                             <constraint firstItem="4co-Nt-hRd" firstAttribute="centerY" secondItem="2dT-1z-opR" secondAttribute="centerY" id="vyp-UX-eLY"/>
                         </constraints>

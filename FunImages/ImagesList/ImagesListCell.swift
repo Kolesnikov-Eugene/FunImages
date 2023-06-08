@@ -15,10 +15,10 @@ final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     private var cellHasGradient = false
     
-    func configCell(with cellImage: UIImage, dateLabelText: String, likeButtonImage: UIImage) {
-        imageForCell.image = cellImage
-        dateLabel.text = dateLabelText
-        likeButton.setImage(likeButtonImage, for: .normal)
+    func configCell(with cellModel: ImageListCellModel) {
+        imageForCell.image = cellModel.imageForCell
+        dateLabel.text = cellModel.dateLabelText
+        likeButton.setImage(cellModel.likeButtonImage, for: .normal)
     }
     
     func addGradientIfNeeded() {
