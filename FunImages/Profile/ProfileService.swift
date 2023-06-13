@@ -13,7 +13,7 @@ final class ProfileService {
     private let urlSession = URLSession.shared
     
     private init() { }
-    
+
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void ) {
 //        assert(Thread.isMainThread)
         let request = profileRequest(token)
@@ -38,7 +38,8 @@ final class ProfileService {
     private func profileRequest(_ token: String) -> URLRequest {
         URLRequest.makeHTTPRequest(path: "/me",
                                    httpMethod: "GET",
-                                   baseURL: Constants.defaultBaseURL)
+                                   baseURL: Constants.defaultBaseURL,
+                                   tokenNeededForRequest: true)
     }
 }
 
