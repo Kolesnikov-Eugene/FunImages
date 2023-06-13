@@ -10,6 +10,8 @@ import Foundation
 final class OAuth2Service {
     static let shared = OAuth2Service()
     
+    private var task: URLSessionTask?
+    private var lastCode: String?
     private let urlSession = URLSession.shared
     private (set) var authToken: String? {
         get {
@@ -23,18 +25,36 @@ final class OAuth2Service {
     private init() { }
     
     func fetchAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        if task != nil {
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                return
+            }
+        }
+        else {
+            if lastCode == code {
+                return
+            }
+        }
+        lastCode = code
         let request = authTokenRequest(code: code)
         let task = object(for: request) { [weak self] result in
             guard let self = self  else { return }
             switch result {
             case .success(let body):
+                print(body.accessToken) //delete
+                self.task = nil
                 let authToken = body.accessToken
                 self.authToken = authToken
                 completion(.success(authToken))
             case .failure(let error):
+                self.lastCode = nil
                 completion(.failure(error))
             }
         }
+        self.task = task
         task.resume()
     }
     

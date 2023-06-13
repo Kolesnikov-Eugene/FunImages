@@ -13,8 +13,10 @@ extension URLRequest {
         httpMethod: String,
         baseURL: URL = Constants.defaultBaseURL
     ) -> URLRequest {
+        let token = OAuth2TokenStorage.shared.token!
         var request = URLRequest(url: URL(string: path, relativeTo: baseURL)!)
         request.httpMethod = httpMethod
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
 }

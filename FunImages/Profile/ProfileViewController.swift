@@ -16,7 +16,21 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setContentAndConstraintsToView()
+        ProfileService.shared.fetchProfile(OAuth2TokenStorage.shared.token!) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                print(ProfileService.shared.profileData)
+                profileInfoLabel.text = ProfileService.shared.profileData?.bio
+//                profileNameLabel.text = profile.name
+            case .failure(let error):
+                print(error)
+                break
+            }
+        }
+        
     }
     
     private func setContentAndConstraintsToView() {
@@ -44,7 +58,7 @@ final class ProfileViewController: UIViewController {
         profileInfoLabel = UILabel()
         view.addSubview(profileInfoLabel)
         profileInfoLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        profileInfoLabel.text = "Hello, World!"
+        profileInfoLabel.text = ""
         profileInfoLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         addProfileInfoLabelConstraints()
         
