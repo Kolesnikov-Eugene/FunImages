@@ -13,23 +13,33 @@ final class ProfileViewController: UIViewController {
     private var accountLabel: UILabel!
     private var profileInfoLabel: UILabel!
     private var logOutButton: UIButton!
+    private var profileService = ProfileService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setContentAndConstraintsToView()
-        ProfileService.shared.fetchProfile(OAuth2TokenStorage.shared.token!) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success:
-                print(ProfileService.shared.profileData)
-                profileInfoLabel.text = ProfileService.shared.profileData?.bio
-//                profileNameLabel.text = profile.name
-            case .failure(let error):
-                print(error)
-                break
-            }
-        }
+        setProfileInfo(profile: profileService.profileData!)
+//        ProfileImageService.shared.fetchProfileImageURL(
+//            username: profileService.profileData!.userName) { result in
+//                switch result {
+//                case .success:
+//                    print("GOOOOOOOOOOD")
+//                case .failure:
+//                    print("error")
+//                }
+//            }
+//        ProfileService.shared.fetchProfile(OAuth2TokenStorage.shared.token!) { [weak self] result in
+//            guard let self = self else { return }
+//            switch result {
+//            case .success:
+//                print(ProfileService.shared.profileData)
+//                setProfileInfo()
+//            case .failure(let error):
+//                print(error)
+//                break
+//            }
+//        }
         
     }
     
@@ -44,13 +54,13 @@ final class ProfileViewController: UIViewController {
         profileNameLabel = UILabel()
         view.addSubview(profileNameLabel)
         profileNameLabel.textColor = .white
-        profileNameLabel.text = "Екатерина Новикова"
+        profileNameLabel.text = ""
         profileNameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         addProfileNameLabelConstraints()
         
         accountLabel = UILabel()
         view.addSubview(accountLabel)
-        accountLabel.text = "@ekaterina_nov"
+        accountLabel.text = ""
         accountLabel.textColor = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
         accountLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         addAccountLabelConstraints()
@@ -115,6 +125,12 @@ final class ProfileViewController: UIViewController {
             logOutButton.leadingAnchor.constraint(greaterThanOrEqualTo: profileImageView.trailingAnchor),
             logOutButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor)
         ])
+    }
+    
+    private func setProfileInfo(profile: Profile) {
+        profileNameLabel.text = profile.name
+        profileInfoLabel.text = profile.bio
+        accountLabel.text = profile.logName
     }
     
     @objc
