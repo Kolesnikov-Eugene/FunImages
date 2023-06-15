@@ -14,12 +14,25 @@ final class ProfileViewController: UIViewController {
     private var profileInfoLabel: UILabel!
     private var logOutButton: UIButton!
     private var profileService = ProfileService.shared
+    private var profileImageService = ProfileImageService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main,
+            using: { [weak self] _ in
+                guard let self = self else { return }
+                self.updateProfileAvatar()
+            })
+        
         setContentAndConstraintsToView()
         setProfileInfo(profile: profileService.profileData!)
+        updateProfileAvatar()
 //        ProfileImageService.shared.fetchProfileImageURL(
 //            username: profileService.profileData!.userName) { result in
 //                switch result {
@@ -131,6 +144,22 @@ final class ProfileViewController: UIViewController {
         profileNameLabel.text = profile.name
         profileInfoLabel.text = profile.bio
         accountLabel.text = profile.logName
+    }
+    
+    private func updateProfileAvatar() {
+        DispatchQueue.global().async {
+            let url = URL(string: self.profileImageService.avatarURL!)!
+            
+            if let data = try? Data(contentsOf: url) {
+                let image1 = UIImage(data: data)
+                
+                DispatchQueue.main.async { [self] in
+                    profileImageView.image = image1
+                }
+            }
+            
+            
+        }
     }
     
     @objc

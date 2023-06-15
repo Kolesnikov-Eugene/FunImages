@@ -8,6 +8,7 @@
 import UIKit
 
 final class ProfileImageService {
+    static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
@@ -27,7 +28,12 @@ final class ProfileImageService {
                     print(profilePhotoURL.profileImage.small)
                     self.task = nil
                     self.avatarURL = profilePhotoURL.profileImage.small
-                    completion(.success(self.avatarURL!)) //TODO
+                    completion(.success(self.avatarURL!))
+                    NotificationCenter.default
+                        .post(
+                            name: ProfileImageService.didChangeNotification,
+                            object: self,
+                            userInfo: ["URL": profilePhotoURL])
                 case .failure(let error):
                     completion(.failure(error))
                 }
