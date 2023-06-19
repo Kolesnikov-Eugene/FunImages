@@ -24,7 +24,9 @@ final class OAuth2Service {
     
     private init() { }
     
-    func fetchAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func fetchAuthToken(
+        _ code: String,
+        completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         
         if task != nil {
@@ -44,7 +46,9 @@ final class OAuth2Service {
         
         let request = authTokenRequest(code: code)
         
-        let task = object(for: request) { [weak self] result in
+        let task = urlSession.object(
+            for: request)
+        { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             guard let self = self  else { return }
             switch result {
             case .success(let body):
@@ -77,19 +81,3 @@ final class OAuth2Service {
     }
 }
 
-extension OAuth2Service {
-    private func object(
-        for request: URLRequest,
-        completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void
-    ) -> URLSessionTask {
-        let decoder = SnakeCaseJSONDecoder()
-        return urlSession.data(for: request) { (result: Result<Data, Error>) in
-            let response = result.flatMap { data -> Result<OAuthTokenResponseBody, Error> in
-                Result {
-                    try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                }
-            }
-            completion(response)
-        }
-    }
-}

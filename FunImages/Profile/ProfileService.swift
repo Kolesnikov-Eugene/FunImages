@@ -23,7 +23,9 @@ final class ProfileService {
         }
         
         let request = profileRequest(token)
-        let task = object(for: request) { [weak self] result in
+        let task = urlSession.object(
+            for: request)
+        { [weak self] (result: Result<ProfileResult, Error>) in
             guard let self = self else { return }
             switch result {
             case .success(let profile):
@@ -36,7 +38,6 @@ final class ProfileService {
             case .failure(let error):
                 completion(.failure(error))
                 print(error)
-                break
             }
         }
         self.task = task
@@ -44,26 +45,10 @@ final class ProfileService {
     }
     
     private func profileRequest(_ token: String) -> URLRequest {
-        URLRequest.makeHTTPRequest(path: "/me",
+        URLRequest.makeHTTPRequest(path: "/me_",
                                    httpMethod: "GET",
                                    baseURL: Constants.defaultBaseURL,
                                    tokenNeededForRequest: true)
     }
 }
 
-extension ProfileService {
-    private func object(
-        for request: URLRequest,
-        completion: @escaping (Result<ProfileResult, Error>) -> Void
-    ) -> URLSessionTask {
-        let decoder = SnakeCaseJSONDecoder()
-        return urlSession.data(for: request) { (result: Result<Data, Error>) in
-            let response = result.flatMap { data -> Result<ProfileResult, Error> in
-                Result {
-                    try decoder.decode(ProfileResult.self, from: data)
-                }
-            }
-            completion(response)
-        }
-    }
-}

@@ -58,10 +58,11 @@ extension SplashViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthanticateWithCode code: String) {
         UIBlockingProgressHUD.show()
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.fetchAuthToken(code)
-        }
+        fetchAuthToken(code)
+//        dismiss(animated: true) { [weak self] in
+//            guard let self = self else { return }
+//            self.fetchAuthToken(code)
+//        }
     }
     
     private func fetchAuthToken(_ code: String) {
@@ -71,10 +72,10 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success:
                 print(result) //delete
                 fetchProfile(token!)
+                dismiss(animated: true)
             case .failure(let error):
-                UIBlockingProgressHUD.dismiss()
                 print(error)
-                break
+                showAlert()
             }
         }
     }
@@ -82,10 +83,10 @@ extension SplashViewController: AuthViewControllerDelegate {
     private func fetchProfile(_ token: String) {
         profileService.fetchProfile(token) { [weak self] result in
             guard let self = self else { return }
+//            dismiss(animated: true) ??
             switch result {
             case .success:
                 UIBlockingProgressHUD.dismiss()
-                
                 profileImageService.fetchProfileImageURL(
                     username: self.profileService.profileData!.userName) { result in
                         switch result {
@@ -95,14 +96,25 @@ extension SplashViewController: AuthViewControllerDelegate {
                             
                         case .failure(let error):
                             print(error)
-                            print("BAAAAAAAD")
+//                            self.showAlert()
                         }
                     }
                 self.switchToTabBarController()
-            case .failure(let error):
-                print(error)
-                break
+            case .failure:
+                showAlert()
             }
         }
+    }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так(",
+                                      message: "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default) { [self] _ in
+            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+            UIBlockingProgressHUD.dismiss()
+        }
+        alert.addAction(action)
+        self.present(alert, animated: true)
     }
 }
