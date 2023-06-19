@@ -72,7 +72,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success:
                 print(result) //delete
                 fetchProfile(token!)
-                dismiss(animated: true)
+//                dismiss(animated: true)
             case .failure(let error):
                 print(error)
                 showAlert()
@@ -100,6 +100,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                         }
                     }
                 self.switchToTabBarController()
+                dismiss(animated: true) //думаю, нужно убирать здесь
             case .failure:
                 showAlert()
             }
@@ -111,10 +112,17 @@ extension SplashViewController: AuthViewControllerDelegate {
                                       message: "Не удалось войти в систему",
                                       preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default) { [self] _ in
-            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
-            UIBlockingProgressHUD.dismiss()
+            if token != nil {
+                fetchProfile(token!)
+            } else {
+                performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+                UIBlockingProgressHUD.dismiss()
+            }
         }
         alert.addAction(action)
         self.present(alert, animated: true)
     }
 }
+
+// если убирать сплеш сразу после получения токена, то в случае ошибки при загрузке профиля -
+// алерт исчезнет вместе с auth скрином. поэтому убирать экран нужно не сразу

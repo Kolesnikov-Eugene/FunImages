@@ -157,8 +157,6 @@ final class ProfileViewController: UIViewController {
                     profileImageView.image = image1
                 }
             }
-            
-            
         }
     }
     
