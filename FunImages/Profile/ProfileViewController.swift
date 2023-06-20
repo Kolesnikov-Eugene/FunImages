@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     private var profileImageView: UIImageView!
@@ -147,17 +148,14 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateProfileAvatar() {
-        DispatchQueue.global().async {
-            let url = URL(string: self.profileImageService.avatarURL!)!
-            
-            if let data = try? Data(contentsOf: url) {
-                let image1 = UIImage(data: data)
-                
-                DispatchQueue.main.async { [self] in
-                    profileImageView.image = image1
-                }
-            }
-        }
+        let url = URL(string: self.profileImageService.avatarURL!)!
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        
+        profileImageView.kf.setImage(
+            with: url,
+            options: [.processor(processor)
+                     ])
     }
     
     @objc
