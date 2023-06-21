@@ -3,13 +3,13 @@
 //  FunImages
 //
 //  Created by Eugene Kolesnikov on 06.06.2023.
-//
+
 
 import UIKit
 import ProgressHUD
 
 final class SplashViewController: UIViewController {
-    private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
+    private var splashScreenImageView: UIImageView!
     private var profileService = ProfileService.shared
     private var profileImageService = ProfileImageService.shared
     private var oauth2Service = OAuth2Service.shared
@@ -17,54 +17,53 @@ final class SplashViewController: UIViewController {
     private var userName: String? {
         profileService.profileData?.userName
     }
-    
+
     var token: String? {
         oauth2Storage.token ?? nil
     }
-    
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureSplashScreen()
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        
+
         if token != nil {
             fetchProfile(token!)
         } else {
-            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+            showAuthViewController()
         }
     }
-    
+
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
-        
+
         let tabBarViewController = UIStoryboard(
             name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarViewController
     }
-}
 
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showAuthenticationScreenSegueIdentifier {
-            guard let navigationController = segue.destination as? UINavigationController,
-                  let viewController = navigationController.viewControllers[0] as? AuthViewController
-            else { return assertionFailure("Failed to prepare for \(showAuthenticationScreenSegueIdentifier)") }
-            viewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
+    private func showAuthViewController() {
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        
+        guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+            return
         }
+        authViewController.delegate = self
+        authViewController.modalPresentationStyle = .fullScreen
+        present(authViewController, animated: true, completion: nil)
     }
 }
-
+//MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthanticateWithCode code: String) {
         UIBlockingProgressHUD.show()
         fetchAuthToken(code)
-//        dismiss(animated: true) { [weak self] in
-//            guard let self = self else { return }
-//            self.fetchAuthToken(code)
-//        }
     }
-    
+
     private func fetchAuthToken(_ code: String) {
         oauth2Service.fetchAuthToken(code) { [weak self] result in
             guard let self = self else { return }
@@ -72,18 +71,16 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success:
                 print(result) //delete
                 fetchProfile(token!)
-//                dismiss(animated: true)
             case .failure(let error):
                 print(error)
                 showAlert()
             }
         }
     }
-    
+
     private func fetchProfile(_ token: String) {
         profileService.fetchProfile(token) { [weak self] result in
             guard let self = self else { return }
-//            dismiss(animated: true) ??
             switch result {
             case .success:
                 UIBlockingProgressHUD.dismiss()
@@ -92,8 +89,8 @@ extension SplashViewController: AuthViewControllerDelegate {
                         switch result {
                         case .success:
                             print(result)
-                            print("GOOOOOOOOOOD111")
-                            
+                            print("GOOOOOOOOOOD")
+
                         case .failure(let error):
                             print(error)
 //                            self.showAlert()
@@ -106,7 +103,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             }
         }
     }
-    
+
     private func showAlert() {
         let alert = UIAlertController(title: "Что-то пошло не так(",
                                       message: "Не удалось войти в систему",
@@ -115,7 +112,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             if token != nil {
                 fetchProfile(token!)
             } else {
-                performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+                showAuthViewController()
                 UIBlockingProgressHUD.dismiss()
             }
         }
@@ -124,5 +121,27 @@ extension SplashViewController: AuthViewControllerDelegate {
     }
 }
 
+// MARK: - Configuration SplashScreenViewController
+extension SplashViewController {
+    private func configureSplashScreen() {
+        view.backgroundColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+
+        splashScreenImageView = UIImageView()
+        splashScreenImageView.image = UIImage(named: "launchScreenLogo")
+        view.addSubview(splashScreenImageView)
+
+        setConstraintsToSplashImageView()
+    }
+
+    private func setConstraintsToSplashImageView() {
+        splashScreenImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            splashScreenImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            splashScreenImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+        ])
+    }
+}
+
 // если убирать сплеш сразу после получения токена, то в случае ошибки при загрузке профиля -
 // алерт исчезнет вместе с auth скрином. поэтому убирать экран нужно не сразу
+
