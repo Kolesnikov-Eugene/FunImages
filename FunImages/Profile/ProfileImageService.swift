@@ -29,10 +29,11 @@ final class ProfileImageService {
                     guard let self = self else { return }
                     switch result {
                     case .success(let profilePhotoURL):
-                        print(profilePhotoURL.profileImage.small)
                         self.task = nil
-                        self.avatarURL = profilePhotoURL.profileImage.small
+                        
+                        self.avatarURL = profilePhotoURL.profileImage.medium
                         completion(.success(self.avatarURL!))
+                        
                         NotificationCenter.default
                             .post(
                                 name: ProfileImageService.didChangeNotification,

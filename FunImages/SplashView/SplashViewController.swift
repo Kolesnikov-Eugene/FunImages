@@ -69,10 +69,8 @@ extension SplashViewController: AuthViewControllerDelegate {
             guard let self = self else { return }
             switch result {
             case .success:
-                print(result) //delete
                 fetchProfile(token!)
-            case .failure(let error):
-                print(error)
+            case .failure:
                 showAlert()
             }
         }
@@ -88,16 +86,14 @@ extension SplashViewController: AuthViewControllerDelegate {
                     username: self.profileService.profileData!.userName) { result in
                         switch result {
                         case .success:
-                            print(result)
-                            print("GOOOOOOOOOOD")
-
+                            print("success")
                         case .failure(let error):
                             print(error)
-//                            self.showAlert()
+                            self.showAlert()
                         }
                     }
                 self.switchToTabBarController()
-                dismiss(animated: true) //думаю, нужно убирать здесь
+                dismiss(animated: true)
             case .failure:
                 showAlert()
             }
@@ -141,7 +137,4 @@ extension SplashViewController {
         ])
     }
 }
-
-// если убирать сплеш сразу после получения токена, то в случае ошибки при загрузке профиля -
-// алерт исчезнет вместе с auth скрином. поэтому убирать экран нужно не сразу
 

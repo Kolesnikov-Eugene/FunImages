@@ -52,7 +52,6 @@ final class OAuth2Service {
             guard let self = self  else { return }
             switch result {
             case .success(let body):
-                print(body.accessToken) //delete
                 self.task = nil
                 let authToken = body.accessToken
                 self.authToken = authToken

@@ -34,34 +34,12 @@ final class ProfileViewController: UIViewController {
         setContentAndConstraintsToView()
         setProfileInfo(profile: profileService.profileData!)
         updateProfileAvatar()
-//        ProfileImageService.shared.fetchProfileImageURL(
-//            username: profileService.profileData!.userName) { result in
-//                switch result {
-//                case .success:
-//                    print("GOOOOOOOOOOD")
-//                case .failure:
-//                    print("error")
-//                }
-//            }
-//        ProfileService.shared.fetchProfile(OAuth2TokenStorage.shared.token!) { [weak self] result in
-//            guard let self = self else { return }
-//            switch result {
-//            case .success:
-//                print(ProfileService.shared.profileData)
-//                setProfileInfo()
-//            case .failure(let error):
-//                print(error)
-//                break
-//            }
-//        }
-        
     }
     
     private func setContentAndConstraintsToView() {
         view.backgroundColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
         
         profileImageView = UIImageView()
-        profileImageView.image = UIImage(named: "profile_photo")
         view.addSubview(profileImageView)
         addProfileImageViewConstraints()
         
@@ -96,6 +74,12 @@ final class ProfileViewController: UIViewController {
     
     private func addProfileImageViewConstraints() {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.frame.size.width = 70
+        profileImageView.frame.size.height = 70
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.layer.masksToBounds = false
+        profileImageView.layer.cornerRadius = 35
+        profileImageView.clipsToBounds = true
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 32),
             profileImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
@@ -154,8 +138,7 @@ final class ProfileViewController: UIViewController {
         
         profileImageView.kf.setImage(
             with: url,
-            options: [.processor(processor)
-                     ])
+            options: [.processor(processor)])
     }
     
     @objc
