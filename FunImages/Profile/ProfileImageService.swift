@@ -40,6 +40,8 @@ final class ProfileImageService {
                                 object: self,
                                 userInfo: ["URL": profilePhotoURL])
                     case .failure(let error):
+                        self.task = nil
+                        
                         completion(.failure(error))
                     }
                 }

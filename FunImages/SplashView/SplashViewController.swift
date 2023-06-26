@@ -9,7 +9,14 @@ import UIKit
 import ProgressHUD
 
 final class SplashViewController: UIViewController {
-    private var splashScreenImageView: UIImageView!
+    private var splashScreenImageView: UIImageView = {
+        let splashScreenImageView = UIImageView()
+
+        splashScreenImageView.image = UIImage(named: "launchScreenLogo")
+        splashScreenImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        return splashScreenImageView
+    }()
     private var profileService = ProfileService.shared
     private var profileImageService = ProfileImageService.shared
     private var oauth2Service = OAuth2Service.shared
@@ -18,20 +25,18 @@ final class SplashViewController: UIViewController {
         profileService.profileData?.userName
     }
 
-    var token: String? {
-        oauth2Storage.token ?? nil
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureSplashScreen()
+        view.backgroundColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
+        addSubViews()
+        applyConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
 
-        if token != nil {
-            fetchProfile(token!)
+        if let token = oauth2Storage.token {
+            fetchProfile(token)
         } else {
             showAuthViewController()
         }
@@ -68,8 +73,8 @@ extension SplashViewController: AuthViewControllerDelegate {
         oauth2Service.fetchAuthToken(code) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success:
-                fetchProfile(token!)
+            case .success(let token):
+                fetchProfile(token)
             case .failure:
                 showAlert()
             }
@@ -86,9 +91,8 @@ extension SplashViewController: AuthViewControllerDelegate {
                     username: self.profileService.profileData!.userName) { result in
                         switch result {
                         case .success:
-                            print("success")
-                        case .failure(let error):
-                            print(error)
+                            break
+                        case .failure:
                             self.showAlert()
                         }
                     }
@@ -104,9 +108,10 @@ extension SplashViewController: AuthViewControllerDelegate {
         let alert = UIAlertController(title: "Что-то пошло не так(",
                                       message: "Не удалось войти в систему",
                                       preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default) { [self] _ in
-            if token != nil {
-                fetchProfile(token!)
+        let action = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            if let token = oauth2Storage.token {
+                fetchProfile(token)
             } else {
                 showAuthViewController()
                 UIBlockingProgressHUD.dismiss()
@@ -119,18 +124,11 @@ extension SplashViewController: AuthViewControllerDelegate {
 
 // MARK: - Configuration SplashScreenViewController
 extension SplashViewController {
-    private func configureSplashScreen() {
-        view.backgroundColor = UIColor(red: 0.102, green: 0.106, blue: 0.133, alpha: 1)
-
-        splashScreenImageView = UIImageView()
-        splashScreenImageView.image = UIImage(named: "launchScreenLogo")
+    private func addSubViews() {
         view.addSubview(splashScreenImageView)
-
-        setConstraintsToSplashImageView()
     }
 
-    private func setConstraintsToSplashImageView() {
-        splashScreenImageView.translatesAutoresizingMaskIntoConstraints = false
+    private func applyConstraints() {
         NSLayoutConstraint.activate([
             splashScreenImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             splashScreenImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)

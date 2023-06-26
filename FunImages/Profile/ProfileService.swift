@@ -30,14 +30,17 @@ final class ProfileService {
             switch result {
             case .success(let profile):
                 self.task = nil
+                
                 profileData = Profile(
                     userName: profile.username,
-                    name: "\(profile.firstName) \(profile.lastName)",
-                    logName: "@\(profile.username)", bio: profile.bio)
+                    name: "\(profile.firstName) \(profile.lastName ?? "")",
+                    logName: "@\(profile.username)", bio: profile.bio ?? "")
+                
                 completion(.success(profileData!))
             case .failure(let error):
+                self.task = nil
+                
                 completion(.failure(error))
-                print(error)
             }
         }
         self.task = task
