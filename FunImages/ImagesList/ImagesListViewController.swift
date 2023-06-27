@@ -10,6 +10,7 @@ import UIKit
 final class ImagesListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     
+    private var imagesListService = ImagesListService.shared
     private let showSingleImageViewIdentifier = "ShowSingleImage"
     private let imagesName: [String] = Array(0..<20).map{ "\($0)" }
     private lazy var dateFormatter: DateFormatter = {
@@ -33,15 +34,15 @@ extension ImagesListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-
+        
         guard let imageListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
-
+        
         configCell(for: imageListCell, with: indexPath)
         
         imageListCell.addGradientIfNeeded()
-
+        
         return imageListCell
     }
 }
@@ -66,6 +67,17 @@ extension ImagesListViewController {
 }
 // MARK: - TableView Delegate
 extension ImagesListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   willDisplay cell: UITableViewCell,
+                   forRowAt indexPath: IndexPath
+    ) {
+        let currentIndex = indexPath.row + 1
+        
+        if currentIndex == imagesListService.photos.count { //TODO
+            imagesListService.fetchPhotosNextPage() //TODO
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: showSingleImageViewIdentifier, sender: indexPath)
         

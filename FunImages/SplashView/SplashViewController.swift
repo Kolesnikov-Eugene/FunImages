@@ -88,7 +88,8 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success:
                 UIBlockingProgressHUD.dismiss()
                 profileImageService.fetchProfileImageURL(
-                    username: self.profileService.profileData!.userName) { result in
+                    username: self.profileService.profileData!.userName) { [weak self] result in
+                        guard let self = self else { return }
                         switch result {
                         case .success:
                             break
