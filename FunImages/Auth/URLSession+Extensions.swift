@@ -40,6 +40,23 @@ extension URLSession {
         }
 }
 
+extension URLSession {
+    func object<T: Codable>(
+        for request: URLRequest,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) -> URLSessionTask {
+        let decoder = SnakeCaseJSONDecoder()
+        return URLSession.shared.data(for: request) { (result: Result<Data, Error>) in
+            let response = result.flatMap { data -> Result<T, Error> in
+                Result {
+                    try decoder.decode(T.self, from: data)
+                }
+            }
+            completion(response)
+        }
+    }
+}
+
 enum NetworkError: Error {
     case httpStatusCode(Int)
     case urlRequestError(Error)
