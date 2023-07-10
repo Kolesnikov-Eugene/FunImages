@@ -27,6 +27,8 @@ final class ImagesListService {
     func fetchPhotosNextPage() {
         let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
         
+        lastLoadedPage = nextPage
+        
         if task != nil {
             task?.cancel()
         }
@@ -35,21 +37,24 @@ final class ImagesListService {
         
         let task = urlSession
             .object(for: request)
-        { [weak self] (result: Result<PhotoResult, Error>) in // check if there is needed an array of PhotoResult ???
+        { [weak self] (result: Result<[PhotoResult], Error>) in // check if there is needed an array of PhotoResult ???
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 switch result {
                 case .success(let photoResult):
                     self.task = nil
-                    let newPhoto = Photo(id: photoResult.id,
-                                         size: CGSize(width: Double(photoResult.width), height: Double(photoResult.height)),
-                                         createdAt: dateFormatter.date(from: photoResult.createdAt),
-                                         welcomeDescription: photoResult.description,
-                                         thumbImageUrl: photoResult.urls.thumb,
-                                         largeImageUrl: photoResult.urls.full,
-                                         isLiked: photoResult.likedByUser)
+                    let newPhoto = photoResult.map { Photo(id: $0.id,
+                                                           size: CGSize(width: Double($0.width), height: Double($0.height)),
+                                                           createdAt: self.dateFormatter.date(from: $0.createdAt),
+                                                           welcomeDescription: $0.description,
+                                                           thumbImageUrl: $0.urls.thumb,
+                                                           largeImageUrl: $0.urls.full,
+                                                           isLiked: $0.likedByUser)
+                    }
                     
-                    photos.append(newPhoto)
+                    photos += newPhoto
+                    
+                    lastLoadedPage = nextPage + 1
                     
                     NotificationCenter.default
                         .post(
@@ -65,9 +70,10 @@ final class ImagesListService {
         self.task = task
         task.resume()
     }
-    //TODO implement parameter page! in HTTPRequest
+    //TODO implement parameter page! in HTTPRequest with queryItems
     private func imagesListRequest(_ token: String) -> URLRequest {
-        URLRequest.makeHTTPRequest(path: "/photos",
+        URLRequest.makeHTTPRequest(path: "/photos"
+                                   + "?page=\(lastLoadedPage!)",
                                    httpMethod: "GET",
                                    baseURL: Constants.defaultBaseURL,
                                    tokenNeededForRequest: true)
