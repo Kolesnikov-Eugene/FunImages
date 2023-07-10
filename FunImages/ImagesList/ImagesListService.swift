@@ -43,7 +43,7 @@ final class ImagesListService {
                 switch result {
                 case .success(let photoResult):
                     self.task = nil
-                    let newPhoto = photoResult.map { Photo(id: $0.id,
+                    photos += photoResult.map { Photo(id: $0.id,
                                                            size: CGSize(width: Double($0.width), height: Double($0.height)),
                                                            createdAt: self.dateFormatter.date(from: $0.createdAt),
                                                            welcomeDescription: $0.description,
@@ -52,15 +52,16 @@ final class ImagesListService {
                                                            isLiked: $0.likedByUser)
                     }
                     
-                    photos += newPhoto
-                    
+//                    photos += newPhoto
+                    print(photos.first)
+                    print(photos.count)
                     lastLoadedPage = nextPage + 1
                     
                     NotificationCenter.default
                         .post(
                             name: ImagesListService.didChangeNotification,
                             object: self,
-                            userInfo: ["URL": photoResult])
+                            userInfo: ["URL": self.photos])
                 case .failure(let error):
                     self.task = nil
                     print(error)
