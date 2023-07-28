@@ -17,7 +17,7 @@ final class ImagesListService {
     private var lastLoadedPage: Int?
     var photos: [Photo] = []
     
-    private lazy var dateFormatter = {
+    private lazy var dateFormatter = { // TODO create func to convert dateformat
         let formatter = ISO8601DateFormatter()
         return formatter
     }()
@@ -37,13 +37,13 @@ final class ImagesListService {
         
         let task = urlSession
             .object(for: request)
-        { [weak self] (result: Result<[PhotoResult], Error>) in // check if there is needed an array of PhotoResult ???
+        { [weak self] (result: Result<[PhotoResult], Error>) in
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 switch result {
                 case .success(let photoResult):
                     self.task = nil
-                    let newPhoto = photoResult.map { Photo(id: $0.id,
+                    photos += photoResult.map { Photo(id: $0.id,
                                                            size: CGSize(width: Double($0.width), height: Double($0.height)),
                                                            createdAt: self.dateFormatter.date(from: $0.createdAt),
                                                            welcomeDescription: $0.description,
@@ -52,15 +52,16 @@ final class ImagesListService {
                                                            isLiked: $0.likedByUser)
                     }
                     
-                    photos += newPhoto
-                    
+//                    photos += newPhoto
+                
+                    print(photos.first?.createdAt)
                     lastLoadedPage = nextPage + 1
                     
                     NotificationCenter.default
                         .post(
                             name: ImagesListService.didChangeNotification,
                             object: self,
-                            userInfo: ["URL": photoResult])
+                            userInfo: ["URL": photos])
                 case .failure(let error):
                     self.task = nil
                     print(error)

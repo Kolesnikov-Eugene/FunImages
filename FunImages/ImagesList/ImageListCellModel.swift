@@ -8,7 +8,7 @@
 import UIKit
 
 struct ImageListCellModel {
-    let imageForCell: UIImage
+    let imageForCell: URL
     let dateLabelText: String
     let likeButtonImage: UIImage
 }

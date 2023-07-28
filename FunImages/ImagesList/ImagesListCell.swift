@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     @IBOutlet private weak var likeButton: UIButton!
@@ -15,8 +16,17 @@ final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     private var cellHasGradient = false
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageForCell.kf.cancelDownloadTask()
+    }
+    
     func configCell(with cellModel: ImageListCellModel) {
-        imageForCell.image = cellModel.imageForCell
+        let imagePlaceholder = UIImage(named: "placeholder_feed")
+        
+        imageForCell.kf.indicatorType = .activity
+        imageForCell.kf.setImage(with: cellModel.imageForCell, placeholder: imagePlaceholder)
+        
         dateLabel.text = cellModel.dateLabelText
         likeButton.setImage(cellModel.likeButtonImage, for: .normal)
     }

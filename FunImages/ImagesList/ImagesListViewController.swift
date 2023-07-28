@@ -12,7 +12,9 @@ final class ImagesListViewController: UIViewController {
     
     private var imagesListService = ImagesListService.shared
     private let showSingleImageViewIdentifier = "ShowSingleImage"
-    private let imagesName: [String] = Array(0..<20).map{ "\($0)" }
+    private var imagesListServiceObserver: NSObjectProtocol?
+    private var photos: [Photo] = []
+//    private let imagesName: [String] = Array(0..<20).map{ "\($0)" } //dont need anymore
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -23,13 +25,25 @@ final class ImagesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        imagesListService.fetchPhotosNextPage()
+        
+        imagesListServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ImagesListService.didChangeNotification,
+                object: nil,
+                queue: .main,
+                using: { [ weak self ] _ in
+                    guard let self else { return assertionFailure("failed to capture self") }
+                    self.updateTableViewAnimated()
+                })
     }
 }
 
 // MARK: - TableView Data Source
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return imagesName.count
+        photos = imagesListService.photos
+        return photos.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -49,16 +63,21 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        let imageName = imagesName[indexPath.row]
-        guard let image = UIImage(named: imageName) else { return }
+//        let imageName = imagesName[indexPath.row]
+        let currentImage = photos[indexPath.row]
+        let imageURL = URL(string: currentImage.thumbImageUrl)!
+//        guard let image = UIImage(named: imageName) else { return }
+        guard let currentDate = currentImage.createdAt else {
+            return assertionFailure("unable to extract date")
+        }
 
-        let dateText = dateFormatter.string(from: Date())
+        let dateText = dateFormatter.string(from: currentDate)
         
         let likeIsOn = indexPath.row % 2 != 0
         let cellLikeButttonImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
         
         let cellModel = ImageListCellModel(
-            imageForCell: image,
+            imageForCell: imageURL,
             dateLabelText: dateText,
             likeButtonImage: cellLikeButttonImage!)
         
@@ -85,27 +104,64 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let image = UIImage(named: imagesName[indexPath.row]) else {
-            return 0
-        }
+        //height and width in PhotoResult
+//        guard let image = UIImage(named: imagesName[indexPath.row]) else {
+//            return 0
+//        }
+        let imageSize = photos[indexPath.row].size
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = image.size.width
+        let imageWidth = imageSize.width
         let scale = imageViewWidth / imageWidth
-        let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
+        let cellHeight = imageSize.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //download fullSize image? via kingFisher
         if segue.identifier == showSingleImageViewIdentifier {
             if let destinationVC = segue.destination as? SingleImageViewController {
                 let indexPath = tableView.indexPathForSelectedRow!
-                let image = UIImage(named: imagesName[indexPath.row])
-                destinationVC.image = image
+//                let image = UIImage(named: imagesName[indexPath.row])
+                let imageURLString = photos[indexPath.row].largeImageUrl
+                let imageURL = URL(string: imageURLString)!
+                destinationVC.fullSizeImageURL = imageURL
+                print(imageURL)
             }
         } else {
             super.prepare(for: segue, sender: sender)
         }
+    }
+    
+    private func updateTableViewAnimated() {
+        let oldCount = photos.count
+        let newCount = imagesListService.photos.count
+        photos = imagesListService.photos
+        
+        if oldCount != newCount {
+            tableView.performBatchUpdates {
+                let indexPaths = (oldCount..<newCount).map { i in
+                    IndexPath(row: i, section: 0)
+                }
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            } completion: { _ in }
+        }
+        
+        //        let oldIndex = photos.count - 1
+        //        let currentIndex = imagesListService.photos.count - 1
+        //        photos = imagesListService.photos
+        //        if oldIndex != currentIndex {
+        //            if oldCount != newCount {
+        //                tableView.performBatchUpdates {
+        //                    let indexPaths = (oldCount..<newCount).map { i in
+        //                        IndexPath(row: i, section: 0)
+        //                    }
+        //                    self.tableView.performBatchUpdates {
+        //                        tableView.insertRows(at: indexPaths, with: .automatic)
+        //                    } completion: { _ in }
+        //                }
+        //            }
+        //        }
     }
 }
 

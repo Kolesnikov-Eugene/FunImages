@@ -6,11 +6,28 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     @IBOutlet private weak var scrollView: UIScrollView!
-    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var imageView: UIImageView! //return private. Create public method to download image?
     
+    var fullSizeImageURL: URL! {
+        didSet {
+            guard isViewLoaded else { return }
+            imageView.kf.indicatorType = .activity
+            imageView.kf.setImage(with: fullSizeImageURL) { [self] result in // try this method ?
+                switch result {
+                case .success(let value):
+                    image = value.image
+                    rescaleAndCenterImageInScrollView(image: image)
+                case .failure:
+                    break
+                }
+            }
+        }
+    }
+//    private var image: UIImage!
     var image: UIImage! {
         didSet {
             guard isViewLoaded else { return }
@@ -21,10 +38,19 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.image = image
-        scrollView.maximumZoomScale = 10
-        scrollView.minimumZoomScale = 1
-        rescaleAndCenterImageInScrollView(image: image)
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: fullSizeImageURL) { result in // try this method ?
+            switch result {
+            case .success(let value):
+                self.image = value.image
+                self.rescaleAndCenterImageInScrollView(image: self.image)
+            case .failure:
+                break
+            }
+        }
+        scrollView.maximumZoomScale = 1
+        scrollView.minimumZoomScale = 0.2
+//        rescaleAndCenterImageInScrollView(image: image)
     }
     
     @IBAction func didPressBackButton(_ sender: UIButton) {
