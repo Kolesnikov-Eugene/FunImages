@@ -12,23 +12,15 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private weak var scrollView: UIScrollView!
     @IBOutlet private weak var imageView: UIImageView! //return private. Create public method to download image?
     
-    var fullSizeImageURL: URL! {
+    var fullSizeImageURL: URL? {
         didSet {
             guard isViewLoaded else { return }
-            imageView.kf.indicatorType = .activity
-            imageView.kf.setImage(with: fullSizeImageURL) { [self] result in // try this method ?
-                switch result {
-                case .success(let value):
-                    image = value.image
-                    rescaleAndCenterImageInScrollView(image: image)
-                case .failure:
-                    break
-                }
-            }
+            loadImage()
         }
     }
+//    var fullSizeImageURL: URL?
 //    private var image: UIImage!
-    var image: UIImage! {
+    private var image: UIImage! {
         didSet {
             guard isViewLoaded else { return }
             imageView.image = image
@@ -38,16 +30,7 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(with: fullSizeImageURL) { result in // try this method ?
-            switch result {
-            case .success(let value):
-                self.image = value.image
-                self.rescaleAndCenterImageInScrollView(image: self.image)
-            case .failure:
-                break
-            }
-        }
+        loadImage()
         scrollView.maximumZoomScale = 1
         scrollView.minimumZoomScale = 0.2
 //        rescaleAndCenterImageInScrollView(image: image)
@@ -64,6 +47,53 @@ final class SingleImageViewController: UIViewController {
         
         present(activityController, animated: true)
     }
+    
+    private func loadImage() {
+        guard let fullSizeImageURL else { return }
+        imageView.kf.setImage(with: fullSizeImageURL) { [ weak self] result in // try this method ?
+            guard let self = self else { return }
+            switch result {
+            case .success(let value):
+                UIBlockingProgressHUD.dismiss()
+                self.image = value.image
+                self.rescaleAndCenterImageInScrollView(image: self.image)
+            case .failure:
+                UIBlockingProgressHUD.dismiss()
+                let alertPresenter = AlertPresenter()
+                let alertModel = AlertModel(
+                    title: "Что-то пошло не так",
+                    message: "Попробовать еще раз?",
+                    buttonText: "OK",
+                    completion: {
+                        self.loadImage()
+                        UIBlockingProgressHUD.show() // try here
+                    }
+                )
+//                self.showAlert()
+                alertPresenter.show(in: self, model: alertModel)
+            }
+        }
+    }
+    
+//    private func showAlert() {
+//        let alert = UIAlertController(title: "Что-то пошло не так(",
+//                                      message: "Попробовать еще раз?",
+//                                      preferredStyle: .alert)
+//        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+//            guard let self else { return }
+//            self.loadImage()
+//        }
+//
+////        let cancelAction = UIAlertAction(title: "Не надо", style: .default) { [weak self] _ in
+////            guard let self = self else { return }
+////
+////        }
+//
+//        alert.addAction(okAction)
+////        alert.addAction(cancelAction)
+//
+//        present(alert, animated: true)
+//    }
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {

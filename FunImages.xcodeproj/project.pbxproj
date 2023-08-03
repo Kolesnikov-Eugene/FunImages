@@ -38,6 +38,10 @@
 		44CC34312A1A356800842B86 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44CC34302A1A356800842B86 /* Assets.xcassets */; };
 		44DCA8872A42311000727F12 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 44DCA8862A42311000727F12 /* Kingfisher */; };
 		44DCA88A2A423F9A00727F12 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 44DCA8892A423F9A00727F12 /* SwiftKeychainWrapper */; };
+		44EF94A02A791D8200417DAD /* ImagesListCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EF949F2A791D8200417DAD /* ImagesListCellDelegate.swift */; };
+		44EF94A22A7BAE7600417DAD /* LikeUpdateResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EF94A12A7BAE7600417DAD /* LikeUpdateResult.swift */; };
+		44EF94A42A7BC15A00417DAD /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EF94A32A7BC15A00417DAD /* AlertPresenter.swift */; };
+		44EF94A72A7BC1B700417DAD /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EF94A62A7BC1B700417DAD /* AlertModel.swift */; };
 		44F444642A38F2F900781A05 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F444632A38F2F900781A05 /* UIBlockingProgressHUD.swift */; };
 		44F444662A38F76D00781A05 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F444652A38F76D00781A05 /* ProfileService.swift */; };
 		44F444692A38F7C500781A05 /* ProfileResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F444682A38F7C500781A05 /* ProfileResult.swift */; };
@@ -75,6 +79,10 @@
 		44B8B7C82A23D80900198864 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
 		44B8B7CA2A23E88100198864 /* WebViewViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewControllerDelegate.swift; sourceTree = "<group>"; };
 		44CC34302A1A356800842B86 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		44EF949F2A791D8200417DAD /* ImagesListCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCellDelegate.swift; sourceTree = "<group>"; };
+		44EF94A12A7BAE7600417DAD /* LikeUpdateResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeUpdateResult.swift; sourceTree = "<group>"; };
+		44EF94A32A7BC15A00417DAD /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
+		44EF94A62A7BC1B700417DAD /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
 		44F444632A38F2F900781A05 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		44F444652A38F76D00781A05 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		44F444682A38F7C500781A05 /* ProfileResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileResult.swift; sourceTree = "<group>"; };
@@ -145,6 +153,7 @@
 				44B0C3802A1FFBD400F58A16 /* Constants.swift */,
 				44F444632A38F2F900781A05 /* UIBlockingProgressHUD.swift */,
 				441EC0D12A4382F200600AE1 /* TabBarController.swift */,
+				44EF94A52A7BC16100417DAD /* Alert */,
 			);
 			path = FunImages;
 			sourceTree = "<group>";
@@ -158,6 +167,8 @@
 				443639DD2A4B69420064B770 /* ImagesListService.swift */,
 				443639E12A4B6E650064B770 /* PhotoResult.swift */,
 				443639DF2A4B69CD0064B770 /* Photo.swift */,
+				44EF949F2A791D8200417DAD /* ImagesListCellDelegate.swift */,
+				44EF94A12A7BAE7600417DAD /* LikeUpdateResult.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -205,6 +216,15 @@
 				441FEF282A0F817000BFE2DB /* SingleImageViewController.swift */,
 			);
 			path = SingleImage;
+			sourceTree = "<group>";
+		};
+		44EF94A52A7BC16100417DAD /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				44EF94A32A7BC15A00417DAD /* AlertPresenter.swift */,
+				44EF94A62A7BC1B700417DAD /* AlertModel.swift */,
+			);
+			path = Alert;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,9 +334,13 @@
 				44B8B7C92A23D80900198864 /* WebViewViewController.swift in Sources */,
 				443639DE2A4B69420064B770 /* ImagesListService.swift in Sources */,
 				4449B6032A0030180085455F /* SceneDelegate.swift in Sources */,
+				44EF94A02A791D8200417DAD /* ImagesListCellDelegate.swift in Sources */,
 				44157F922A2FB16D00A97F60 /* SplashViewController.swift in Sources */,
+				44EF94A22A7BAE7600417DAD /* LikeUpdateResult.swift in Sources */,
 				44B443862A3261D400E19D32 /* SnakeCaseJSONDecoder.swift in Sources */,
 				44F444662A38F76D00781A05 /* ProfileService.swift in Sources */,
+				44EF94A72A7BC1B700417DAD /* AlertModel.swift in Sources */,
+				44EF94A42A7BC15A00417DAD /* AlertPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

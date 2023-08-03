@@ -14,6 +14,7 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageViewIdentifier = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
+    private let progressHUD = UIBlockingProgressHUD.shared
 //    private let imagesName: [String] = Array(0..<20).map{ "\($0)" } //dont need anymore
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -57,6 +58,8 @@ extension ImagesListViewController: UITableViewDataSource {
         
         imageListCell.addGradientIfNeeded()
         
+        imageListCell.delegate = self
+        
         return imageListCell
     }
 }
@@ -73,7 +76,7 @@ extension ImagesListViewController {
 
         let dateText = dateFormatter.string(from: currentDate)
         
-        let likeIsOn = indexPath.row % 2 != 0
+        let likeIsOn = currentImage.isLiked
         let cellLikeButttonImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
         
         let cellModel = ImageListCellModel(
@@ -101,6 +104,8 @@ extension ImagesListViewController: UITableViewDelegate {
         performSegue(withIdentifier: showSingleImageViewIdentifier, sender: indexPath)
         
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        UIBlockingProgressHUD.show()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -162,6 +167,36 @@ extension ImagesListViewController: UITableViewDelegate {
         //                }
         //            }
         //        }
+    }
+}
+
+//MARK: - ImagesListCellDelegate
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else {
+            return assertionFailure("Something went wrong")
+        }
+        let photo = photos[indexPath.row]
+        
+        UIBlockingProgressHUD.show()
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            imagesListService.changeLike(
+                photoId: photo.id,
+                isLiked: photo.isLiked) { result in
+                    switch result {
+                    case .success:
+                        self.photos[indexPath.row] = self.imagesListService.photos[indexPath.row]
+                        cell.changeLike(isLiked: self.photos[indexPath.row].isLiked)
+                        
+                        UIBlockingProgressHUD.dismiss()
+                    case .failure:
+                        assertionFailure("something went wrong")
+                        UIBlockingProgressHUD.dismiss()
+                    }
+                }
+        }
     }
 }
 
