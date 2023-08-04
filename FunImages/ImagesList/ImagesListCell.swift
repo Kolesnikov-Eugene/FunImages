@@ -16,7 +16,6 @@ final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     private var cellHasGradient = false
     weak var delegate: ImagesListCellDelegate?
-//    private var isLiked = true
     
     override func prepareForReuse() {
         super.prepareForReuse()

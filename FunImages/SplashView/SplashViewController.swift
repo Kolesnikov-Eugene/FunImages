@@ -105,21 +105,21 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
     }
 
-    private func showAlert() {
-        let alert = UIAlertController(title: "Что-то пошло не так(",
-                                      message: "Не удалось войти в систему",
-                                      preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            if let token = oauth2Storage.token {
-                fetchProfile(token)
-            } else {
-                showAuthViewController()
-                UIBlockingProgressHUD.dismiss()
+    private func showAlert() { //TODO try if it works now
+        let alertPresenter = AlertPresenter()
+        let alertModel = AlertModel(
+            title: "Что-то пошло не так(",
+            message: "Не удалось войти в систему",
+            okButtonText: "OK",
+            cancelButtonText: nil) {
+                if let token = self.oauth2Storage.token {
+                    self.fetchProfile(token)
+                } else {
+                    self.showAuthViewController()
+                    UIBlockingProgressHUD.dismiss()
+                }
             }
-        }
-        alert.addAction(action)
-        self.present(alert, animated: true)
+        alertPresenter.show(in: self, model: alertModel, alertHasTwoButtons: false)
     }
 }
 

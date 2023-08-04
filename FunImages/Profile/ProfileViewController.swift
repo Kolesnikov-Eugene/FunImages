@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import WebKit
 
 final class ProfileViewController: UIViewController {
     private var profileImageView: UIImageView = {
@@ -138,6 +139,8 @@ final class ProfileViewController: UIViewController {
     @objc
     private func didTapLogOutButton(_ sender: UIButton) {
         OAuth2TokenStorage.shared.deleteToken()
+        
+        OAuth2TokenStorage.clean()
         
         for view in view.subviews {
             if view is UILabel {

@@ -17,7 +17,10 @@ extension URLRequest {
         var request = URLRequest(url: URL(string: path, relativeTo: baseURL)!)
         request.httpMethod = httpMethod
         if tokenNeededForRequest {
-            let token = OAuth2TokenStorage.shared.token!
+            guard let token = OAuth2TokenStorage.shared.token else {
+                assertionFailure("Unable to retrieve token from storage") // check if this is correct
+                return request
+            }
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         return request

@@ -10,7 +10,7 @@ import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     @IBOutlet private weak var scrollView: UIScrollView!
-    @IBOutlet private weak var imageView: UIImageView! //return private. Create public method to download image?
+    @IBOutlet private weak var imageView: UIImageView!
     
     var fullSizeImageURL: URL? {
         didSet {
@@ -18,8 +18,7 @@ final class SingleImageViewController: UIViewController {
             loadImage()
         }
     }
-//    var fullSizeImageURL: URL?
-//    private var image: UIImage!
+    
     private var image: UIImage! {
         didSet {
             guard isViewLoaded else { return }
@@ -33,7 +32,7 @@ final class SingleImageViewController: UIViewController {
         loadImage()
         scrollView.maximumZoomScale = 1
         scrollView.minimumZoomScale = 0.2
-//        rescaleAndCenterImageInScrollView(image: image)
+//        rescaleAndCenterImageInScrollView(image: image) //see if this method works correctly
     }
     
     @IBAction func didPressBackButton(_ sender: UIButton) {
@@ -50,7 +49,7 @@ final class SingleImageViewController: UIViewController {
     
     private func loadImage() {
         guard let fullSizeImageURL else { return }
-        imageView.kf.setImage(with: fullSizeImageURL) { [ weak self] result in // try this method ?
+        imageView.kf.setImage(with: fullSizeImageURL) { [ weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let value):
@@ -63,37 +62,17 @@ final class SingleImageViewController: UIViewController {
                 let alertModel = AlertModel(
                     title: "Что-то пошло не так",
                     message: "Попробовать еще раз?",
-                    buttonText: "OK",
+                    okButtonText: "OK",
+                    cancelButtonText: "Нет",
                     completion: {
                         self.loadImage()
-                        UIBlockingProgressHUD.show() // try here
+                        UIBlockingProgressHUD.show()
                     }
                 )
-//                self.showAlert()
-                alertPresenter.show(in: self, model: alertModel)
+                alertPresenter.show(in: self, model: alertModel, alertHasTwoButtons: true)
             }
         }
     }
-    
-//    private func showAlert() {
-//        let alert = UIAlertController(title: "Что-то пошло не так(",
-//                                      message: "Попробовать еще раз?",
-//                                      preferredStyle: .alert)
-//        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-//            guard let self else { return }
-//            self.loadImage()
-//        }
-//
-////        let cancelAction = UIAlertAction(title: "Не надо", style: .default) { [weak self] _ in
-////            guard let self = self else { return }
-////
-////        }
-//
-//        alert.addAction(okAction)
-////        alert.addAction(cancelAction)
-//
-//        present(alert, animated: true)
-//    }
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {

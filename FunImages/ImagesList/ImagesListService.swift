@@ -55,9 +55,6 @@ final class ImagesListService {
                     )
                     }
                     
-                    //                    photos += newPhoto
-                    
-                    print(photos.first?.createdAt)
                     lastLoadedPage = nextPage + 1
                     
                     NotificationCenter.default
@@ -85,7 +82,7 @@ final class ImagesListService {
             httpMethodForLike = "POST"
         }
         
-        guard let token = OAuth2TokenStorage.shared.token else { return }
+        guard let token = OAuth2TokenStorage.shared.token else { return } //assert
         let request = setLikeRequest(token, photoID: photoId, httpMethod: httpMethodForLike)
         
         let likeTask = urlSession

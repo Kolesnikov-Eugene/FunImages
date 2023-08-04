@@ -14,8 +14,7 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageViewIdentifier = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
-    private let progressHUD = UIBlockingProgressHUD.shared
-//    private let imagesName: [String] = Array(0..<20).map{ "\($0)" } //dont need anymore
+    private let progressHUD = UIBlockingProgressHUD.shared // check if it works
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -34,7 +33,7 @@ final class ImagesListViewController: UIViewController {
                 object: nil,
                 queue: .main,
                 using: { [ weak self ] _ in
-                    guard let self else { return assertionFailure("failed to capture self") }
+                    guard let self = self else { return assertionFailure("failed to capture self") }
                     self.updateTableViewAnimated()
                 })
     }
@@ -66,14 +65,12 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-//        let imageName = imagesName[indexPath.row]
         let currentImage = photos[indexPath.row]
-        let imageURL = URL(string: currentImage.thumbImageUrl)!
-//        guard let image = UIImage(named: imageName) else { return }
-        guard let currentDate = currentImage.createdAt else {
+        guard let imageURL = URL(string: currentImage.thumbImageUrl),
+              let currentDate = currentImage.createdAt else {
             return assertionFailure("unable to extract date")
         }
-
+        
         let dateText = dateFormatter.string(from: currentDate)
         
         let likeIsOn = currentImage.isLiked
@@ -95,8 +92,8 @@ extension ImagesListViewController: UITableViewDelegate {
     ) {
         let currentIndex = indexPath.row + 1
         
-        if currentIndex == imagesListService.photos.count { //TODO
-            imagesListService.fetchPhotosNextPage() //TODO
+        if currentIndex == imagesListService.photos.count {
+            imagesListService.fetchPhotosNextPage()
         }
     }
     
@@ -109,10 +106,6 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        //height and width in PhotoResult
-//        guard let image = UIImage(named: imagesName[indexPath.row]) else {
-//            return 0
-//        }
         let imageSize = photos[indexPath.row].size
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
@@ -123,15 +116,15 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //download fullSize image? via kingFisher
         if segue.identifier == showSingleImageViewIdentifier {
             if let destinationVC = segue.destination as? SingleImageViewController {
                 let indexPath = tableView.indexPathForSelectedRow!
-//                let image = UIImage(named: imagesName[indexPath.row])
                 let imageURLString = photos[indexPath.row].largeImageUrl
-                let imageURL = URL(string: imageURLString)!
+                guard let imageURL = URL(string: imageURLString) else {
+                    return assertionFailure("unable to extract fullSizeImageURL")
+                }
                 destinationVC.fullSizeImageURL = imageURL
-                print(imageURL)
+                print(imageURL) //DELETE
             }
         } else {
             super.prepare(for: segue, sender: sender)
