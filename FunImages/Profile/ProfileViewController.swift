@@ -7,7 +7,6 @@
 
 import UIKit
 import Kingfisher
-import WebKit
 
 final class ProfileViewController: UIViewController {
     private lazy var profileImageView: UIImageView = {
