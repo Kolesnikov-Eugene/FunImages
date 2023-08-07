@@ -14,7 +14,7 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageViewIdentifier = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
-    private let progressHUD = UIBlockingProgressHUD.shared // check if it works
+    private let progressHUD = UIBlockingProgressHUD.shared
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -33,7 +33,9 @@ final class ImagesListViewController: UIViewController {
                 object: nil,
                 queue: .main,
                 using: { [ weak self ] _ in
-                    guard let self = self else { return assertionFailure("failed to capture self") }
+                    guard let self = self else {
+                        return
+                    }
                     self.updateTableViewAnimated()
                 })
     }
@@ -68,7 +70,8 @@ extension ImagesListViewController {
         let currentImage = photos[indexPath.row]
         guard let imageURL = URL(string: currentImage.thumbImageUrl),
               let currentDate = currentImage.createdAt else {
-            return assertionFailure("unable to extract date")
+            assertionFailure("unable to extract date")
+            return
         }
         
         let dateText = dateFormatter.string(from: currentDate)
@@ -121,10 +124,10 @@ extension ImagesListViewController: UITableViewDelegate {
                 let indexPath = tableView.indexPathForSelectedRow!
                 let imageURLString = photos[indexPath.row].largeImageUrl
                 guard let imageURL = URL(string: imageURLString) else {
-                    return assertionFailure("unable to extract fullSizeImageURL")
+                    assertionFailure("unable to extract fullSizeImageURL")
+                    return
                 }
                 destinationVC.fullSizeImageURL = imageURL
-                print(imageURL) //DELETE
             }
         } else {
             super.prepare(for: segue, sender: sender)
@@ -144,22 +147,6 @@ extension ImagesListViewController: UITableViewDelegate {
                 tableView.insertRows(at: indexPaths, with: .automatic)
             } completion: { _ in }
         }
-        
-        //        let oldIndex = photos.count - 1
-        //        let currentIndex = imagesListService.photos.count - 1
-        //        photos = imagesListService.photos
-        //        if oldIndex != currentIndex {
-        //            if oldCount != newCount {
-        //                tableView.performBatchUpdates {
-        //                    let indexPaths = (oldCount..<newCount).map { i in
-        //                        IndexPath(row: i, section: 0)
-        //                    }
-        //                    self.tableView.performBatchUpdates {
-        //                        tableView.insertRows(at: indexPaths, with: .automatic)
-        //                    } completion: { _ in }
-        //                }
-        //            }
-        //        }
     }
 }
 
@@ -167,7 +154,8 @@ extension ImagesListViewController: UITableViewDelegate {
 extension ImagesListViewController: ImagesListCellDelegate {
     func imagesListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else {
-            return assertionFailure("Something went wrong")
+            assertionFailure("Something went wrong")
+            return
         }
         let photo = photos[indexPath.row]
         
@@ -185,8 +173,8 @@ extension ImagesListViewController: ImagesListCellDelegate {
                         
                         UIBlockingProgressHUD.dismiss()
                     case .failure:
-                        assertionFailure("something went wrong")
                         UIBlockingProgressHUD.dismiss()
+                        assertionFailure("something went wrong")
                     }
                 }
         }

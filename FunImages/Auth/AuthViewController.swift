@@ -21,7 +21,10 @@ final class AuthViewController: UIViewController {
         if segue.identifier == showWebViewIdentifier {
             guard
                 let webViewViewController = segue.destination as? WebViewViewController
-            else { return assertionFailure("Failed to prepare for \(showWebViewIdentifier)") }
+            else {
+                assertionFailure("Failed to prepare for \(showWebViewIdentifier)")
+                return
+            }
             webViewViewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)

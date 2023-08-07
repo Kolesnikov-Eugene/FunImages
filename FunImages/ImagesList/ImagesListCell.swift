@@ -40,8 +40,8 @@ final class ImagesListCell: UITableViewCell {
     }
     
     func changeLike(isLiked: Bool) {
-        let cellLikeButttonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
-        likeButton.setImage(cellLikeButttonImage, for: .normal)
+        let cellLikeButtonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+        likeButton.setImage(cellLikeButtonImage, for: .normal)
     }
     
     private func addGradient() {

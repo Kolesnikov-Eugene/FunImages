@@ -18,7 +18,7 @@ final class ImagesListService {
     private var lastLoadedPage: Int?
     var photos: [Photo] = []
     
-    private lazy var dateFormatter = { // TODO create func to convert dateformat
+    private lazy var dateFormatter = {
         let formatter = ISO8601DateFormatter()
         return formatter
     }()
@@ -33,7 +33,10 @@ final class ImagesListService {
         if task != nil {
             task?.cancel()
         }
-        guard let token = OAuth2TokenStorage.shared.token else { return }
+        guard let token = OAuth2TokenStorage.shared.token else {
+            assertionFailure("No token in ImagesListService")
+            return
+        }
         let request = imagesListRequest(token)
         
         let task = urlSession
@@ -64,7 +67,7 @@ final class ImagesListService {
                             userInfo: ["URL": photos])
                 case .failure(let error):
                     self.task = nil
-                    print(error)
+                    assertionFailure("\(error)")
                 }
             }
         }
@@ -82,7 +85,7 @@ final class ImagesListService {
             httpMethodForLike = "POST"
         }
         
-        guard let token = OAuth2TokenStorage.shared.token else { return } //assert
+        guard let token = OAuth2TokenStorage.shared.token else { return }
         let request = setLikeRequest(token, photoID: photoId, httpMethod: httpMethodForLike)
         
         let likeTask = urlSession
@@ -118,7 +121,6 @@ final class ImagesListService {
         self.likeTask = likeTask
         likeTask.resume()
     }
-    //TODO implement parameter page! in HTTPRequest with queryItems
     private func imagesListRequest(_ token: String) -> URLRequest {
         URLRequest.makeHTTPRequest(path: "/photos"
                                    + "?page=\(lastLoadedPage!)",

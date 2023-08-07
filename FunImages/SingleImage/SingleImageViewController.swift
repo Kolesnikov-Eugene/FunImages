@@ -19,29 +19,29 @@ final class SingleImageViewController: UIViewController {
         }
     }
     
-    private var image: UIImage! {
-        didSet {
-            guard isViewLoaded else { return }
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
-        }
-    }
+    private var bigImage: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadImage()
-        scrollView.maximumZoomScale = 1
+        scrollView.maximumZoomScale = 0.75
         scrollView.minimumZoomScale = 0.2
-//        rescaleAndCenterImageInScrollView(image: image) //see if this method works correctly
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIBlockingProgressHUD.dismiss()
     }
     
     @IBAction func didPressBackButton(_ sender: UIButton) {
+        bigImage = nil
+        fullSizeImageURL = nil
         dismiss(animated: true, completion: nil)
     }
     
     @IBAction func didTapShareButton(_ sender: UIButton) {
         let activityController = UIActivityViewController(
-            activityItems: [image!],
+            activityItems: [bigImage!],
             applicationActivities: nil)
         
         present(activityController, animated: true)
@@ -54,8 +54,9 @@ final class SingleImageViewController: UIViewController {
             switch result {
             case .success(let value):
                 UIBlockingProgressHUD.dismiss()
-                self.image = value.image
-                self.rescaleAndCenterImageInScrollView(image: self.image)
+                self.bigImage = value.image
+                guard let bigImage = bigImage else { return }
+                self.rescaleAndCenterImageInScrollView(image: bigImage)
             case .failure:
                 UIBlockingProgressHUD.dismiss()
                 let alertPresenter = AlertPresenter()

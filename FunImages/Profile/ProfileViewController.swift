@@ -10,10 +10,10 @@ import Kingfisher
 import WebKit
 
 final class ProfileViewController: UIViewController {
-    private var profileImageView: UIImageView = {
+    private lazy var profileImageView: UIImageView = {
         let profileImageView = UIImageView()
         
-        profileImageView.image = UIImage(named: "ProfilePhotoPlaceholder")
+        profileImageView.image = UIImage(named: "profile_photo_placeholder")
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.frame.size.width = 70
         profileImageView.frame.size.height = 70
@@ -24,7 +24,7 @@ final class ProfileViewController: UIViewController {
         
         return profileImageView
     }()
-    private var profileNameLabel: UILabel = {
+    private lazy var profileNameLabel: UILabel = {
         let profileNameLabel = UILabel()
         
         profileNameLabel.textColor = .white
@@ -35,7 +35,7 @@ final class ProfileViewController: UIViewController {
         
         return profileNameLabel
     }()
-    private var accountLabel: UILabel = {
+    private lazy var accountLabel: UILabel = {
         let accountLabel = UILabel()
         
         accountLabel.text = ""
@@ -46,7 +46,7 @@ final class ProfileViewController: UIViewController {
         
         return accountLabel
     }()
-    private var profileInfoLabel: UILabel = {
+    private lazy var profileInfoLabel: UILabel = {
         let profileInfoLabel = UILabel()
         
         profileInfoLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
@@ -127,7 +127,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateProfileAvatar() {
-        let url = URL(string: self.profileImageService.avatarURL!)!
+        guard let url = URL(string: self.profileImageService.avatarURL!) else { return }
         
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         
@@ -138,21 +138,33 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogOutButton(_ sender: UIButton) {
-        OAuth2TokenStorage.shared.deleteToken()
-        
-        OAuth2TokenStorage.clean()
-        
-        for view in view.subviews {
-            if view is UILabel {
-                view.removeFromSuperview()
-            }
-            else {
-                if let view = view as? UIImageView {
-                    view.image = UIImage(named: "ProfilePhotoPlaceholder")
+        showExitAlert()
+    }
+    
+    private func showExitAlert() {
+        let alertPresenter = AlertPresenter()
+        let alertModel = AlertModel(
+            title: "Пока, Пока!",
+            message: "Уверены, что хотите выйти?",
+            okButtonText: "Да",
+            cancelButtonText: "Нет") {
+                OAuth2TokenStorage.shared.deleteToken()
+                
+                CookiesCleaner.cleanCookies()
+                
+                for view in self.view.subviews {
+                    if view is UILabel {
+                        view.removeFromSuperview()
+                    }
+                    else {
+                        if let view = view as? UIImageView {
+                            view.image = UIImage(named: "profile_photo_placeholder")
+                        }
+                    }
                 }
+                
+                self.present(SplashViewController(), animated: true)
             }
-        }
-        
-        present(SplashViewController(), animated: true)
+        alertPresenter.show(in: self, model: alertModel, alertHasTwoButtons: true)
     }
 }

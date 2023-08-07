@@ -18,7 +18,7 @@ extension URLRequest {
         request.httpMethod = httpMethod
         if tokenNeededForRequest {
             guard let token = OAuth2TokenStorage.shared.token else {
-                assertionFailure("Unable to retrieve token from storage") // check if this is correct
+                assertionFailure("Unable to retrieve token from storage")
                 return request
             }
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

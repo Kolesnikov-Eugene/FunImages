@@ -9,7 +9,7 @@ import UIKit
 import ProgressHUD
 
 final class SplashViewController: UIViewController {
-    private var splashScreenImageView: UIImageView = {
+    private lazy var splashScreenImageView: UIImageView = {
         let splashScreenImageView = UIImageView()
 
         splashScreenImageView.image = UIImage(named: "launchScreenLogo")
@@ -105,7 +105,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
     }
 
-    private func showAlert() { //TODO try if it works now
+    private func showAlert() { 
         let alertPresenter = AlertPresenter()
         let alertModel = AlertModel(
             title: "Что-то пошло не так(",
