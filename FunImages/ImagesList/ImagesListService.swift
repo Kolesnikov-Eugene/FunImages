@@ -47,7 +47,8 @@ final class ImagesListService {
                 switch result {
                 case .success(let photoResult):
                     self.task = nil
-                    photos += photoResult.map { Photo(
+                    photos += photoResult.map {
+                        Photo(
                         id: $0.id,
                         size: CGSize(width: Double($0.width), height: Double($0.height)),
                         createdAt: self.dateFormatter.date(from: $0.createdAt),
@@ -80,10 +81,7 @@ final class ImagesListService {
             likeTask?.cancel()
         }
         
-        var httpMethodForLike = "DELETE"
-        if !isLiked {
-            httpMethodForLike = "POST"
-        }
+        let httpMethodForLike = isLiked ? "DELETE" : "POST"
         
         guard let token = OAuth2TokenStorage.shared.token else { return }
         let request = setLikeRequest(token, photoID: photoId, httpMethod: httpMethodForLike)

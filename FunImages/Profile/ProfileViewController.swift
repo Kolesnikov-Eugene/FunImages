@@ -16,9 +16,10 @@ final class ProfileViewController: UIViewController {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.frame.size.width = 70
         profileImageView.frame.size.height = 70
-        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.layer.borderWidth = 1
+        profileImageView.layer.borderColor = UIColor.black.cgColor
         profileImageView.layer.masksToBounds = false
-        profileImageView.layer.cornerRadius = 35
+        profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
         profileImageView.clipsToBounds = true
         
         return profileImageView
@@ -104,6 +105,8 @@ final class ProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 32),
             profileImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            profileImageView.heightAnchor.constraint(equalToConstant: 70),
+            profileImageView.widthAnchor.constraint(equalToConstant: 70),
             profileNameLabel.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
             profileNameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 8),
             profileNameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 16),
@@ -128,13 +131,13 @@ final class ProfileViewController: UIViewController {
     private func updateProfileAvatar() {
         guard let url = URL(string: self.profileImageService.avatarURL!) else { return }
         
-        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let processor = RoundCornerImageProcessor(cornerRadius: profileImageView.frame.height / 2)
         
         profileImageView.kf.setImage(
             with: url,
             options: [.processor(processor)])
     }
-    
+
     @objc
     private func didTapLogOutButton(_ sender: UIButton) {
         showExitAlert()
@@ -147,23 +150,23 @@ final class ProfileViewController: UIViewController {
             message: "Уверены, что хотите выйти?",
             okButtonText: "Да",
             cancelButtonText: "Нет") {
-                OAuth2TokenStorage.shared.deleteToken()
+                self.clearUserAuthInfo()
                 
-                CookiesCleaner.cleanCookies()
-                
-                for view in self.view.subviews {
-                    if view is UILabel {
-                        view.removeFromSuperview()
-                    }
-                    else {
-                        if let view = view as? UIImageView {
-                            view.image = UIImage(named: "profile_photo_placeholder")
-                        }
-                    }
-                }
-                
-                self.present(SplashViewController(), animated: true)
+                self.switchRootViewControllerToSplashViewController()
             }
         alertPresenter.show(in: self, model: alertModel, alertHasTwoButtons: true)
+    }
+    
+    private func switchRootViewControllerToSplashViewController() {
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+
+        let splashViewController = SplashViewController()
+        window.rootViewController = splashViewController
+    }
+    
+    private func clearUserAuthInfo() {
+        OAuth2TokenStorage.shared.deleteToken()
+        
+        CookiesCleaner.cleanCookies()
     }
 }

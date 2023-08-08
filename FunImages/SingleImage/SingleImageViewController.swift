@@ -40,8 +40,10 @@ final class SingleImageViewController: UIViewController {
     }
     
     @IBAction func didTapShareButton(_ sender: UIButton) {
+        guard let bigImage = bigImage else { return }
+        
         let activityController = UIActivityViewController(
-            activityItems: [bigImage!],
+            activityItems: [bigImage],
             applicationActivities: nil)
         
         present(activityController, animated: true)

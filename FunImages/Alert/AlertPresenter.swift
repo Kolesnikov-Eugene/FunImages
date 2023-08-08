@@ -22,8 +22,7 @@ final class AlertPresenter {
         
         if alertHasTwoButtons {
             guard let text = model.cancelButtonText else { return }
-            let cancelAction = UIAlertAction(title: text, style: .default) { _ in
-            }
+            let cancelAction = UIAlertAction(title: text, style: .default)
             
             alert.addAction(cancelAction)
         }

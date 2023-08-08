@@ -33,10 +33,7 @@ final class ImagesListViewController: UIViewController {
                 object: nil,
                 queue: .main,
                 using: { [ weak self ] _ in
-                    guard let self = self else {
-                        return
-                    }
-                    self.updateTableViewAnimated()
+                    self?.updateTableViewAnimated()
                 })
     }
 }
@@ -68,13 +65,12 @@ extension ImagesListViewController: UITableViewDataSource {
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         let currentImage = photos[indexPath.row]
-        guard let imageURL = URL(string: currentImage.thumbImageUrl),
-              let currentDate = currentImage.createdAt else {
+        guard let imageURL = URL(string: currentImage.thumbImageUrl) else {
             assertionFailure("unable to extract date")
             return
         }
         
-        let dateText = dateFormatter.string(from: currentDate)
+        let dateText = getDateToDisplay(from: currentImage)
         
         let likeIsOn = currentImage.isLiked
         let cellLikeButttonImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
@@ -85,6 +81,14 @@ extension ImagesListViewController {
             likeButtonImage: cellLikeButttonImage!)
         
         cell.configCell(with: cellModel)
+    }
+    
+    private func getDateToDisplay(from imageModel: Photo) -> String {
+        guard let currentDate = imageModel.createdAt else {
+            return ""
+        }
+        let dateText = dateFormatter.string(from: currentDate)
+        return dateText
     }
 }
 // MARK: - TableView Delegate
