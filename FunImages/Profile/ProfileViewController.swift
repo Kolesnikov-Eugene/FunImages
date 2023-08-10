@@ -9,21 +9,22 @@ import UIKit
 import Kingfisher
 
 final class ProfileViewController: UIViewController {
-    private var profileImageView: UIImageView = {
+    private lazy var profileImageView: UIImageView = {
         let profileImageView = UIImageView()
         
-        profileImageView.image = UIImage(named: "ProfilePhotoPlaceholder")
+        profileImageView.image = UIImage(named: "profile_photo_placeholder")
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.frame.size.width = 70
         profileImageView.frame.size.height = 70
-        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.layer.borderWidth = 1
+        profileImageView.layer.borderColor = UIColor.black.cgColor
         profileImageView.layer.masksToBounds = false
-        profileImageView.layer.cornerRadius = 35
+        profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
         profileImageView.clipsToBounds = true
         
         return profileImageView
     }()
-    private var profileNameLabel: UILabel = {
+    private lazy var profileNameLabel: UILabel = {
         let profileNameLabel = UILabel()
         
         profileNameLabel.textColor = .white
@@ -34,7 +35,7 @@ final class ProfileViewController: UIViewController {
         
         return profileNameLabel
     }()
-    private var accountLabel: UILabel = {
+    private lazy var accountLabel: UILabel = {
         let accountLabel = UILabel()
         
         accountLabel.text = ""
@@ -45,7 +46,7 @@ final class ProfileViewController: UIViewController {
         
         return accountLabel
     }()
-    private var profileInfoLabel: UILabel = {
+    private lazy var profileInfoLabel: UILabel = {
         let profileInfoLabel = UILabel()
         
         profileInfoLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
@@ -104,6 +105,8 @@ final class ProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 32),
             profileImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            profileImageView.heightAnchor.constraint(equalToConstant: 70),
+            profileImageView.widthAnchor.constraint(equalToConstant: 70),
             profileNameLabel.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
             profileNameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 8),
             profileNameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 16),
@@ -126,30 +129,44 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateProfileAvatar() {
-        let url = URL(string: self.profileImageService.avatarURL!)!
+        guard let url = URL(string: self.profileImageService.avatarURL!) else { return }
         
-        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let processor = RoundCornerImageProcessor(cornerRadius: profileImageView.frame.height / 2)
         
         profileImageView.kf.setImage(
             with: url,
             options: [.processor(processor)])
     }
-    
+
     @objc
     private func didTapLogOutButton(_ sender: UIButton) {
+        showExitAlert()
+    }
+    
+    private func showExitAlert() {
+        let alertPresenter = AlertPresenter()
+        let alertModel = AlertModel(
+            title: "Пока, Пока!",
+            message: "Уверены, что хотите выйти?",
+            okButtonText: "Да",
+            cancelButtonText: "Нет") {
+                self.clearUserAuthInfo()
+                
+                self.switchRootViewControllerToSplashViewController()
+            }
+        alertPresenter.show(in: self, model: alertModel, alertHasTwoButtons: true)
+    }
+    
+    private func switchRootViewControllerToSplashViewController() {
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+
+        let splashViewController = SplashViewController()
+        window.rootViewController = splashViewController
+    }
+    
+    private func clearUserAuthInfo() {
         OAuth2TokenStorage.shared.deleteToken()
         
-        for view in view.subviews {
-            if view is UILabel {
-                view.removeFromSuperview()
-            }
-            else {
-                if let view = view as? UIImageView {
-                    view.image = UIImage(named: "ProfilePhotoPlaceholder")
-                }
-            }
-        }
-        
-        present(SplashViewController(), animated: true)
+        CookiesCleaner.cleanCookies()
     }
 }

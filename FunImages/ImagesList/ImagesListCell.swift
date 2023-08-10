@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     @IBOutlet private weak var likeButton: UIButton!
@@ -14,9 +15,19 @@ final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     private var cellHasGradient = false
+    weak var delegate: ImagesListCellDelegate?
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageForCell.kf.cancelDownloadTask()
+    }
     
     func configCell(with cellModel: ImageListCellModel) {
-        imageForCell.image = cellModel.imageForCell
+        let imagePlaceholder = UIImage(named: "placeholder_feed")
+        
+        imageForCell.kf.indicatorType = .activity
+        imageForCell.kf.setImage(with: cellModel.imageForCell, placeholder: imagePlaceholder)
+        
         dateLabel.text = cellModel.dateLabelText
         likeButton.setImage(cellModel.likeButtonImage, for: .normal)
     }
@@ -26,6 +37,11 @@ final class ImagesListCell: UITableViewCell {
             addGradient()
             cellHasGradient = true
         }
+    }
+    
+    func changeLike(isLiked: Bool) {
+        let cellLikeButtonImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+        likeButton.setImage(cellLikeButtonImage, for: .normal)
     }
     
     private func addGradient() {
@@ -51,5 +67,9 @@ final class ImagesListCell: UITableViewCell {
         view.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0).isActive = true
         view.trailingAnchor.constraint(equalTo: parent.trailingAnchor, constant: 0).isActive = true
         view.bottomAnchor.constraint(equalTo: parent.bottomAnchor, constant: 0).isActive = true
+    }
+
+    @IBAction private func likeButtonClicked(_ sender: UIButton) {
+        delegate?.imagesListCellDidTapLike(self)
     }
 }
