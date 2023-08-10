@@ -27,7 +27,8 @@ extension URLSession {
                 {
                     if 200..<300 ~= statusCode {
                         fulfillCompletion(.success(data))
-                        print(String(data: data, encoding: .utf8) as Any)
+                    } else if statusCode == 500 {
+                        return
                     } else {
                         fulfillCompletion(.failure(NetworkError.httpStatusCode(statusCode)))
                     }
