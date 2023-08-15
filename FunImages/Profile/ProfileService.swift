@@ -50,7 +50,7 @@ final class ProfileService {
     private func profileRequest(_ token: String) -> URLRequest {
         URLRequest.makeHTTPRequest(path: "/me",
                                    httpMethod: "GET",
-                                   baseURL: Constants.defaultBaseURL,
+                                   baseURL: DefaultBaseURL,
                                    tokenNeededForRequest: true)
     }
 }
