@@ -123,7 +123,7 @@ final class ImagesListService {
         URLRequest.makeHTTPRequest(path: "/photos"
                                    + "?page=\(lastLoadedPage!)",
                                    httpMethod: "GET",
-                                   baseURL: Constants.defaultBaseURL,
+                                   baseURL: DefaultBaseURL,
                                    tokenNeededForRequest: true)
     }
     
