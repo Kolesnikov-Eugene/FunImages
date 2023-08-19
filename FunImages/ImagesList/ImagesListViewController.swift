@@ -10,12 +10,12 @@ import UIKit
 final class ImagesListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     
-    private var imagesListService = ImagesListService.shared
+    private var imagesListService = ImagesListService.shared //presenter
     private let showSingleImageViewIdentifier = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
-    private var photos: [Photo] = []
+    private var photos: [Photo] = [] //presenter
     private let progressHUD = UIBlockingProgressHUD.shared
-    private lazy var dateFormatter: DateFormatter = {
+    private lazy var dateFormatter: DateFormatter = { //presenter
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
@@ -25,7 +25,7 @@ final class ImagesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        imagesListService.fetchPhotosNextPage()
+        imagesListService.fetchPhotosNextPage() //presenter
         
         imagesListServiceObserver = NotificationCenter.default
             .addObserver(
@@ -63,7 +63,7 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController {
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) { //presenter
         let currentImage = photos[indexPath.row]
         guard let imageURL = URL(string: currentImage.thumbImageUrl) else {
             assertionFailure("unable to extract date")
@@ -83,7 +83,7 @@ extension ImagesListViewController {
         cell.configCell(with: cellModel)
     }
     
-    private func getDateToDisplay(from imageModel: Photo) -> String {
+    private func getDateToDisplay(from imageModel: Photo) -> String { //presenter
         guard let currentDate = imageModel.createdAt else {
             return ""
         }
@@ -99,7 +99,7 @@ extension ImagesListViewController: UITableViewDelegate {
     ) {
         let currentIndex = indexPath.row + 1
         
-        if currentIndex == imagesListService.photos.count {
+        if currentIndex == imagesListService.photos.count { //move logic to presenter
             imagesListService.fetchPhotosNextPage()
         }
     }
@@ -138,7 +138,7 @@ extension ImagesListViewController: UITableViewDelegate {
         }
     }
     
-    private func updateTableViewAnimated() {
+    private func updateTableViewAnimated() { //presenter?
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
         photos = imagesListService.photos
@@ -157,7 +157,7 @@ extension ImagesListViewController: UITableViewDelegate {
 //MARK: - ImagesListCellDelegate
 extension ImagesListViewController: ImagesListCellDelegate {
     func imagesListCellDidTapLike(_ cell: ImagesListCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else {
+        guard let indexPath = tableView.indexPath(for: cell) else { //move some logic to presenter
             assertionFailure("Something went wrong")
             return
         }
