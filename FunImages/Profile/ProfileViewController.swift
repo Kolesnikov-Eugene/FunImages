@@ -9,7 +9,6 @@ import UIKit
 
 protocol ProfileViewControllerProtocol: AnyObject {
     var profilePresenter: ProfileViewPresenter? { get set }
-    func didTapLogOutButton(_ sender: UIButton)
     func setProfileInfo(profile: Profile)
     func showAlert(_ alertPresenter: AlertPresenter, model: AlertModel, twoButtons: Bool)
     func switchRootViewControllerToSplashViewController()
@@ -31,7 +30,7 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
         
         return profileImageView
     }()
-    private lazy var profileNameLabel: UILabel = {
+    lazy var profileNameLabel: UILabel = {
         let profileNameLabel = UILabel()
         
         profileNameLabel.textColor = .white
@@ -70,6 +69,8 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
                                                  action: #selector(self.didTapLogOutButton))
         logOutButton.tintColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1)
         logOutButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        logOutButton.accessibilityIdentifier = "logout_button"
         
         return logOutButton
     }()

@@ -5,10 +5,10 @@
 //  Created by Eugene Kolesnikov on 19.08.2023.
 //
 
-import UIKit
+import Foundation
 import Kingfisher
 
-protocol ProfileViewPresenterProtocol {
+protocol ProfileViewPresenterProtocol: AnyObject {
     var profileView: ProfileViewControllerProtocol? { get set }
     func didUpdateProfileAvatar()
     func didUpdateProfileInfo()
@@ -42,7 +42,7 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
         }
     }
     
-    private func showExitAlert() {
+    func showExitAlert() {
         let alertPresenter = AlertPresenter()
         let alertModel = AlertModel(
             title: "Пока, Пока!",
@@ -57,7 +57,7 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
         profileView?.showAlert(alertPresenter, model: alertModel, twoButtons: true)
     }
     
-    private func clearUserAuthInfo() {
+    func clearUserAuthInfo() {
         OAuth2TokenStorage.shared.deleteToken()
         
         CookiesCleaner.cleanCookies()
