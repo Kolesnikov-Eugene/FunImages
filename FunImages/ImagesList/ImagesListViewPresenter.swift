@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ImagesListViewPresenterProtocol {
-    var imagesListView: ImagesListViewController? { get set }
+    var imagesListView: ImagesListViewControllerProtocol? { get set }
     func fetchPhotosForNextPage()
     func didConfigure(_ cell: ImagesListCell, with indexPath: IndexPath)
     func getPhotosCount() -> Int
@@ -28,7 +28,7 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
         formatter.timeStyle = .none
         return formatter
     }()
-    weak var imagesListView: ImagesListViewController?
+    weak var imagesListView: ImagesListViewControllerProtocol?
     
     func fetchPhotosForNextPage() {
         imagesListService.fetchPhotosNextPage()

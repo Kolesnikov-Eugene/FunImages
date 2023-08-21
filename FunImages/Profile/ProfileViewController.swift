@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ProfileViewControllerProtocol: AnyObject {
-    var profilePresenter: ProfileViewPresenter? { get set }
+    var profilePresenter: ProfileViewPresenterProtocol? { get set }
     func setProfileInfo(profile: Profile)
     func showAlert(_ alertPresenter: AlertPresenter, model: AlertModel, twoButtons: Bool)
     func switchRootViewControllerToSplashViewController()
@@ -76,7 +76,7 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
     }()
     
     private var profileImageServiceObserver: NSObjectProtocol?
-    var profilePresenter: ProfileViewPresenter?
+    var profilePresenter: ProfileViewPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()

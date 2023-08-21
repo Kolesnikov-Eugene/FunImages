@@ -25,6 +25,8 @@
 		4449B6052A0030180085455F /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4449B6042A0030180085455F /* ImagesListViewController.swift */; };
 		4449B6082A0030180085455F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4449B6062A0030180085455F /* Main.storyboard */; };
 		4449B60D2A0030190085455F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4449B60B2A0030190085455F /* LaunchScreen.storyboard */; };
+		4463958E2A93F6A8005265D7 /* ImagesListViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4463958D2A93F6A8005265D7 /* ImagesListViewTests.swift */; };
+		446395902A93F6EE005265D7 /* ImagesListViewPresenterSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4463958F2A93F6EE005265D7 /* ImagesListViewPresenterSpy.swift */; };
 		446D31392A924B0D001CCDDA /* ProfileViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D31382A924B0D001CCDDA /* ProfileViewTests.swift */; };
 		446D313B2A924D41001CCDDA /* ProfileViewPresenterSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D313A2A924D41001CCDDA /* ProfileViewPresenterSpy.swift */; };
 		446D313D2A925D51001CCDDA /* ProfileViewControllerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D313C2A925D51001CCDDA /* ProfileViewControllerSpy.swift */; };
@@ -99,6 +101,8 @@
 		4449B6072A0030180085455F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4449B60C2A0030190085455F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4449B60E2A0030190085455F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4463958D2A93F6A8005265D7 /* ImagesListViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewTests.swift; sourceTree = "<group>"; };
+		4463958F2A93F6EE005265D7 /* ImagesListViewPresenterSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewPresenterSpy.swift; sourceTree = "<group>"; };
 		446D31382A924B0D001CCDDA /* ProfileViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewTests.swift; sourceTree = "<group>"; };
 		446D313A2A924D41001CCDDA /* ProfileViewPresenterSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewPresenterSpy.swift; sourceTree = "<group>"; };
 		446D313C2A925D51001CCDDA /* ProfileViewControllerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewControllerSpy.swift; sourceTree = "<group>"; };
@@ -274,6 +278,8 @@
 				446D31382A924B0D001CCDDA /* ProfileViewTests.swift */,
 				446D313A2A924D41001CCDDA /* ProfileViewPresenterSpy.swift */,
 				446D313C2A925D51001CCDDA /* ProfileViewControllerSpy.swift */,
+				4463958D2A93F6A8005265D7 /* ImagesListViewTests.swift */,
+				4463958F2A93F6EE005265D7 /* ImagesListViewPresenterSpy.swift */,
 			);
 			path = FunImagesTests;
 			sourceTree = "<group>";
@@ -520,8 +526,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				446395902A93F6EE005265D7 /* ImagesListViewPresenterSpy.swift in Sources */,
 				446D31392A924B0D001CCDDA /* ProfileViewTests.swift in Sources */,
 				446D313B2A924D41001CCDDA /* ProfileViewPresenterSpy.swift in Sources */,
+				4463958E2A93F6A8005265D7 /* ImagesListViewTests.swift in Sources */,
 				44B0995E2A8C155900A5593F /* WebViewTests.swift in Sources */,
 				443116462A8D4C69008B0324 /* WebViewViewControllerSpy.swift in Sources */,
 				443116442A8D49F5008B0324 /* WebViewPresenterSpy.swift in Sources */,

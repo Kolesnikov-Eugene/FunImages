@@ -9,7 +9,7 @@ import Foundation
 @testable import FunImages
 
 final class ProfileViewControllerSpy: ProfileViewControllerProtocol {
-    var profilePresenter: FunImages.ProfileViewPresenter?
+    var profilePresenter: FunImages.ProfileViewPresenterProtocol?
     var alertCalled = false
     
     func setProfileInfo(profile: FunImages.Profile) {

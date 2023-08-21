@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ImagesListViewControllerProtocol: AnyObject {
-    var imagesListViewPresenter: ImagesListViewPresenter? { get set }
+    var imagesListViewPresenter: ImagesListViewPresenterProtocol? { get set }
     func updateTableViewAnimated(_ oldCount: Int, _ newCount: Int)
 }
 
@@ -19,7 +19,7 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
     private var imagesListServiceObserver: NSObjectProtocol?
     private let progressHUD = UIBlockingProgressHUD.shared
     
-    var imagesListViewPresenter: ImagesListViewPresenter?
+    var imagesListViewPresenter: ImagesListViewPresenterProtocol?
       
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +37,7 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
     }
     
     func configure(_ presenter: ImagesListViewPresenterProtocol) {
-        self.imagesListViewPresenter = presenter as? ImagesListViewPresenter
+        self.imagesListViewPresenter = presenter
         imagesListViewPresenter?.imagesListView = self
     }
 }

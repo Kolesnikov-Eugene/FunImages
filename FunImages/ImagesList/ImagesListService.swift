@@ -66,9 +66,9 @@ final class ImagesListService {
                             name: ImagesListService.didChangeNotification,
                             object: self,
                             userInfo: ["URL": photos])
-                case .failure(let error):
+                case .failure(_):
                     self.task = nil
-                    assertionFailure("\(error)")
+                    break
                 }
             }
         }
