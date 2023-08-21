@@ -9,8 +9,8 @@ import XCTest
 
 private let email = ""
 private let password = ""
-private let nameLastName = ""
-private let userName = ""
+private let nameLastName = "Eugene Kols"
+private let userName = "@eugene_kolesnikov"
 
 final class FunImagesUITests: XCTestCase {
     private let app = XCUIApplication() // переменная приложения
