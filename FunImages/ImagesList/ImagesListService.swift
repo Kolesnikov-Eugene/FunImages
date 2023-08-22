@@ -66,9 +66,9 @@ final class ImagesListService {
                             name: ImagesListService.didChangeNotification,
                             object: self,
                             userInfo: ["URL": photos])
-                case .failure(let error):
+                case .failure(_):
                     self.task = nil
-                    assertionFailure("\(error)")
+                    break
                 }
             }
         }
@@ -123,7 +123,7 @@ final class ImagesListService {
         URLRequest.makeHTTPRequest(path: "/photos"
                                    + "?page=\(lastLoadedPage!)",
                                    httpMethod: "GET",
-                                   baseURL: Constants.defaultBaseURL,
+                                   baseURL: DefaultBaseURL,
                                    tokenNeededForRequest: true)
     }
     

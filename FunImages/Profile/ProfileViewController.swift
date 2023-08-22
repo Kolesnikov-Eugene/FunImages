@@ -6,10 +6,16 @@
 //
 
 import UIKit
-import Kingfisher
 
-final class ProfileViewController: UIViewController {
-    private lazy var profileImageView: UIImageView = {
+protocol ProfileViewControllerProtocol: AnyObject {
+    var profilePresenter: ProfileViewPresenterProtocol? { get set }
+    func setProfileInfo(profile: Profile)
+    func showAlert(_ alertPresenter: AlertPresenter, model: AlertModel, twoButtons: Bool)
+    func switchRootViewControllerToSplashViewController()
+}
+
+final class ProfileViewController: UIViewController & ProfileViewControllerProtocol {
+    lazy var profileImageView: UIImageView = {
         let profileImageView = UIImageView()
         
         profileImageView.image = UIImage(named: "profile_photo_placeholder")
@@ -24,7 +30,7 @@ final class ProfileViewController: UIViewController {
         
         return profileImageView
     }()
-    private lazy var profileNameLabel: UILabel = {
+    lazy var profileNameLabel: UILabel = {
         let profileNameLabel = UILabel()
         
         profileNameLabel.textColor = .white
@@ -64,11 +70,13 @@ final class ProfileViewController: UIViewController {
         logOutButton.tintColor = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1)
         logOutButton.translatesAutoresizingMaskIntoConstraints = false
         
+        logOutButton.accessibilityIdentifier = "logout_button"
+        
         return logOutButton
     }()
-    private var profileService = ProfileService.shared
-    private var profileImageService = ProfileImageService.shared
+    
     private var profileImageServiceObserver: NSObjectProtocol?
+    var profilePresenter: ProfileViewPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,14 +91,12 @@ final class ProfileViewController: UIViewController {
             queue: .main,
             using: { [weak self] _ in
                 guard let self = self else { return }
-                self.updateProfileAvatar()
+                self.profilePresenter?.didUpdateProfileAvatar()
             })
         
-        if let profileData = profileService.profileData {
-            setProfileInfo(profile: profileData)
-        }
+        profilePresenter?.didUpdateProfileAvatar()
         
-        updateProfileAvatar()
+        profilePresenter?.didUpdateProfileInfo()
     }
     
     private func addSubViews() {
@@ -122,51 +128,25 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
-    private func setProfileInfo(profile: Profile) {
+    func setProfileInfo(profile: Profile) {
         profileNameLabel.text = profile.name
         profileInfoLabel.text = profile.bio
         accountLabel.text = profile.logName
     }
-    
-    private func updateProfileAvatar() {
-        guard let url = URL(string: self.profileImageService.avatarURL!) else { return }
-        
-        let processor = RoundCornerImageProcessor(cornerRadius: profileImageView.frame.height / 2)
-        
-        profileImageView.kf.setImage(
-            with: url,
-            options: [.processor(processor)])
-    }
 
     @objc
-    private func didTapLogOutButton(_ sender: UIButton) {
-        showExitAlert()
+    func didTapLogOutButton(_ sender: UIButton) {
+        profilePresenter?.didExitProfile()
     }
     
-    private func showExitAlert() {
-        let alertPresenter = AlertPresenter()
-        let alertModel = AlertModel(
-            title: "Пока, Пока!",
-            message: "Уверены, что хотите выйти?",
-            okButtonText: "Да",
-            cancelButtonText: "Нет") {
-                self.clearUserAuthInfo()
-                
-                self.switchRootViewControllerToSplashViewController()
-            }
-        alertPresenter.show(in: self, model: alertModel, alertHasTwoButtons: true)
+    func showAlert(_ alertPresenter: AlertPresenter, model: AlertModel, twoButtons: Bool) {
+        alertPresenter.show(in: self, model: model, alertHasTwoButtons: twoButtons)
     }
     
-    private func switchRootViewControllerToSplashViewController() {
+    func switchRootViewControllerToSplashViewController() {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
 
         let splashViewController = SplashViewController()
         window.rootViewController = splashViewController
-    }
-    
-    private func clearUserAuthInfo() {
-        OAuth2TokenStorage.shared.deleteToken()
-        
-        CookiesCleaner.cleanCookies()
     }
 }

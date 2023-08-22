@@ -17,7 +17,7 @@ final class ImagesListCell: UITableViewCell {
     private var cellHasGradient = false
     weak var delegate: ImagesListCellDelegate?
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         imageForCell.kf.cancelDownloadTask()
     }

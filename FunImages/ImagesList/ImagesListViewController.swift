@@ -7,25 +7,24 @@
 
 import UIKit
 
-final class ImagesListViewController: UIViewController {
+protocol ImagesListViewControllerProtocol: AnyObject {
+    var imagesListViewPresenter: ImagesListViewPresenterProtocol? { get set }
+    func updateTableViewAnimated(_ oldCount: Int, _ newCount: Int)
+}
+
+final class ImagesListViewController: UIViewController & ImagesListViewControllerProtocol {
     @IBOutlet private weak var tableView: UITableView!
     
-    private var imagesListService = ImagesListService.shared
     private let showSingleImageViewIdentifier = "ShowSingleImage"
     private var imagesListServiceObserver: NSObjectProtocol?
-    private var photos: [Photo] = []
     private let progressHUD = UIBlockingProgressHUD.shared
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
+    
+    var imagesListViewPresenter: ImagesListViewPresenterProtocol?
       
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        imagesListService.fetchPhotosNextPage()
+        imagesListViewPresenter?.fetchPhotosForNextPage()
         
         imagesListServiceObserver = NotificationCenter.default
             .addObserver(
@@ -33,16 +32,21 @@ final class ImagesListViewController: UIViewController {
                 object: nil,
                 queue: .main,
                 using: { [ weak self ] _ in
-                    self?.updateTableViewAnimated()
+                    self?.imagesListViewPresenter?.didUpdateTableView()
                 })
+    }
+    
+    func configure(_ presenter: ImagesListViewPresenterProtocol) {
+        self.imagesListViewPresenter = presenter
+        imagesListViewPresenter?.imagesListView = self
     }
 }
 
 // MARK: - TableView Data Source
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        photos = imagesListService.photos
-        return photos.count
+        guard let imagesListViewPresenter = imagesListViewPresenter else { return 0 }
+        return imagesListViewPresenter.getPhotosCount()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -52,7 +56,7 @@ extension ImagesListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        configCell(for: imageListCell, with: indexPath)
+        imagesListViewPresenter?.didConfigure(imageListCell, with: indexPath)
         
         imageListCell.addGradientIfNeeded()
         
@@ -62,35 +66,6 @@ extension ImagesListViewController: UITableViewDataSource {
     }
 }
 
-extension ImagesListViewController {
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        let currentImage = photos[indexPath.row]
-        guard let imageURL = URL(string: currentImage.thumbImageUrl) else {
-            assertionFailure("unable to extract date")
-            return
-        }
-        
-        let dateText = getDateToDisplay(from: currentImage)
-        
-        let likeIsOn = currentImage.isLiked
-        let cellLikeButttonImage = likeIsOn ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
-        
-        let cellModel = ImageListCellModel(
-            imageForCell: imageURL,
-            dateLabelText: dateText,
-            likeButtonImage: cellLikeButttonImage!)
-        
-        cell.configCell(with: cellModel)
-    }
-    
-    private func getDateToDisplay(from imageModel: Photo) -> String {
-        guard let currentDate = imageModel.createdAt else {
-            return ""
-        }
-        let dateText = dateFormatter.string(from: currentDate)
-        return dateText
-    }
-}
 // MARK: - TableView Delegate
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
@@ -99,9 +74,7 @@ extension ImagesListViewController: UITableViewDelegate {
     ) {
         let currentIndex = indexPath.row + 1
         
-        if currentIndex == imagesListService.photos.count {
-            imagesListService.fetchPhotosNextPage()
-        }
+        imagesListViewPresenter?.checkToFetchNextPage(for: currentIndex)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -113,20 +86,21 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let imageSize = photos[indexPath.row].size
-        let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
-        let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = imageSize.width
-        let scale = imageViewWidth / imageWidth
-        let cellHeight = imageSize.height * scale + imageInsets.top + imageInsets.bottom
+        let tableViewWidth = tableView.bounds.width
+        
+        guard let imagesListViewPresenter = imagesListViewPresenter else { return 0 }
+        
+        let cellHeight = imagesListViewPresenter.calculateHeightForCell(for: tableViewWidth ,at: indexPath)
+        
         return cellHeight
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageViewIdentifier {
-            if let destinationVC = segue.destination as? SingleImageViewController {
+            if let destinationVC = segue.destination as? SingleImageViewController,
+            let imagesListViewPresenter = imagesListViewPresenter {
                 let indexPath = tableView.indexPathForSelectedRow!
-                let imageURLString = photos[indexPath.row].largeImageUrl
+                let imageURLString = imagesListViewPresenter.getLargeImageURL(at: indexPath)
                 guard let imageURL = URL(string: imageURLString) else {
                     assertionFailure("unable to extract fullSizeImageURL")
                     return
@@ -138,49 +112,37 @@ extension ImagesListViewController: UITableViewDelegate {
         }
     }
     
-    private func updateTableViewAnimated() {
-        let oldCount = photos.count
-        let newCount = imagesListService.photos.count
-        photos = imagesListService.photos
-        
-        if oldCount != newCount {
-            tableView.performBatchUpdates {
-                let indexPaths = (oldCount..<newCount).map { i in
-                    IndexPath(row: i, section: 0)
-                }
-                tableView.insertRows(at: indexPaths, with: .automatic)
-            } completion: { _ in }
-        }
+    func updateTableViewAnimated(_ oldCount: Int, _ newCount: Int) {
+        tableView.performBatchUpdates {
+            let indexPaths = (oldCount..<newCount).map { i in
+                IndexPath(row: i, section: 0)
+            }
+            tableView.insertRows(at: indexPaths, with: .automatic)
+        } completion: { _ in }
     }
 }
 
 //MARK: - ImagesListCellDelegate
 extension ImagesListViewController: ImagesListCellDelegate {
     func imagesListCellDidTapLike(_ cell: ImagesListCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else {
+        guard let indexPath = tableView.indexPath(for: cell) else { 
             assertionFailure("Something went wrong")
             return
         }
-        let photo = photos[indexPath.row]
         
         UIBlockingProgressHUD.show()
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            imagesListService.changeLike(
-                photoId: photo.id,
-                isLiked: photo.isLiked) { result in
-                    switch result {
-                    case .success:
-                        self.photos[indexPath.row] = self.imagesListService.photos[indexPath.row]
-                        cell.changeLike(isLiked: self.photos[indexPath.row].isLiked)
-                        
-                        UIBlockingProgressHUD.dismiss()
-                    case .failure:
-                        UIBlockingProgressHUD.dismiss()
-                        assertionFailure("something went wrong")
-                    }
+            imagesListViewPresenter?.didChangeLike(for: cell, at: indexPath) { result in
+                switch result {
+                case .success:
+                    UIBlockingProgressHUD.dismiss()
+                case .failure(let error):
+                    UIBlockingProgressHUD.dismiss()
+                    assertionFailure("something went wrong with \(error)")
                 }
+            }
         }
     }
 }
